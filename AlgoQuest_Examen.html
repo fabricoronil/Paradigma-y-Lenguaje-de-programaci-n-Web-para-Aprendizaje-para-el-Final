@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALGO QUEST · El Desafío del Profesor — Paradigmas y Lenguajes de Programación I</title>
+<style>
+  :root{
+    --bg:#0a0a1f; --panel:rgba(30,28,68,.72); --ink:#eef0ff; --muted:#a3a8d8; --line:rgba(120,130,220,.35);
+    --green:#4dffb0; --red:#ff5d7a; --yellow:#ffd34e; --cyan:#4de1ff; --purple:#b07bff; --pink:#ff7bd5; --orange:#ffa64e;
+    --mono:'Courier New',ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;overflow-x:hidden}
+  body{background:#070718;color:var(--ink);font-family:'Segoe UI',system-ui,Arial,sans-serif;min-height:100vh;line-height:1.5;position:relative}
+  #aurora{position:fixed;inset:0;z-index:-2;background:
+    radial-gradient(50% 50% at 15% 20%, rgba(122,90,255,.35), transparent 60%),
+    radial-gradient(50% 50% at 85% 15%, rgba(77,225,255,.28), transparent 60%),
+    radial-gradient(60% 60% at 50% 100%, rgba(255,123,213,.22), transparent 60%),#070718;animation:hue 18s ease-in-out infinite alternate}
+  @keyframes hue{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(40deg)}}
+  #stars{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+  .sym{position:absolute;font-family:var(--mono);color:rgba(160,170,255,.13);font-weight:bold;animation:floatUp linear infinite;user-select:none}
+  @keyframes floatUp{from{transform:translateY(110vh) rotate(0)}to{transform:translateY(-20vh) rotate(360deg)}}
+  .wrap{max-width:780px;margin:0 auto;padding:clamp(12px,3.5vw,26px);position:relative;z-index:1}
+  .title{font-family:var(--mono);font-weight:bold;text-align:center;font-size:clamp(28px,8vw,54px);letter-spacing:1px;margin:0;
+    background:linear-gradient(90deg,var(--cyan),var(--purple),var(--pink),var(--cyan));background-size:300% auto;
+    -webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite;filter:drop-shadow(0 0 22px rgba(122,90,255,.45))}
+  @keyframes shine{to{background-position:300% center}}
+  .subtitle{color:var(--muted);font-size:clamp(12px,2.6vw,15px);text-align:center;margin:6px 0 16px}
+  .glass{background:var(--panel);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:20px;padding:clamp(16px,4vw,26px);box-shadow:0 12px 40px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.05)}
+  .btn{font-family:var(--mono);font-size:15px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:rgba(50,48,100,.6);color:var(--ink);padding:13px 18px;border-radius:14px;transition:.15s;width:100%;text-align:left;display:block;position:relative;overflow:hidden}
+  .btn:hover{border-color:var(--cyan);transform:translateY(-2px);box-shadow:0 8px 24px rgba(77,225,255,.18)}
+  .btn:active{transform:translateY(0)}
+  .btn.primary{background:linear-gradient(90deg,#19c98a,#0e9c6a);border-color:#3dffb0;color:#001a12;text-align:center}
+  .btn.primary:hover{filter:brightness(1.15);box-shadow:0 8px 28px rgba(77,255,176,.35)}
+  .btn.ghost{background:transparent;text-align:center}
+  .btn.small{width:auto;display:inline-block;font-size:13px;padding:10px 16px}
+  .heroProf{display:flex;flex-direction:column;align-items:center;margin-bottom:6px}
+  .profWrap{position:relative;width:130px;height:130px;animation:bob 3.5s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  .profWrap svg{width:100%;height:100%;filter:drop-shadow(0 8px 18px rgba(0,0,0,.5))}
+  .profName{font-family:var(--mono);color:var(--cyan);font-size:13px;margin-top:6px;text-align:center}
+  .bubble{position:relative;background:linear-gradient(180deg,#ffffff,#e9ecff);color:#161a35;border-radius:16px;padding:14px 18px;margin:10px auto 0;max-width:520px;font-size:15px;box-shadow:0 8px 24px rgba(0,0,0,.3);animation:pop .4s ease}
+  .bubble:before{content:'';position:absolute;top:-10px;left:50%;transform:translateX(-50%);border:10px solid transparent;border-bottom-color:#fff;border-top:0}
+  @keyframes pop{0%{transform:scale(.85);opacity:0}100%{transform:scale(1);opacity:1}}
+  .modes{display:grid;gap:12px;margin-top:18px}
+  .mode{background:linear-gradient(145deg,rgba(60,56,120,.55),rgba(25,23,60,.55));border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;transition:.18s;display:flex;gap:14px;align-items:center;position:relative;overflow:hidden}
+  .mode:hover{border-color:var(--cyan);transform:translateY(-3px) scale(1.01);box-shadow:0 12px 30px rgba(0,0,0,.4)}
+  .mode:after{content:'';position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.08) 50%,transparent 70%);transform:translateX(-120%);transition:.5s}
+  .mode:hover:after{transform:translateX(120%)}
+  .mode .em{font-size:34px;filter:drop-shadow(0 0 10px rgba(122,90,255,.5))}
+  .mode b{font-size:16px} .mode small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+  .topics{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:16px}
+  .topic{background:rgba(50,48,100,.5);border:1px solid var(--line);border-radius:14px;padding:14px 10px;cursor:pointer;text-align:center;transition:.16s;font-size:13px}
+  .topic:hover{border-color:var(--purple);transform:translateY(-3px);background:rgba(176,123,255,.15)}
+  .topic .em{font-size:26px;display:block;margin-bottom:6px;transition:.2s}
+  .topic:hover .em{transform:scale(1.2) rotate(-6deg)}
+  .topic small{color:var(--muted);font-size:11px;display:block}
+  .hud{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:14px;margin-bottom:10px;gap:8px;flex-wrap:wrap}
+  .hud span{transition:transform .2s}
+  .hud .bump{transform:scale(1.4)}
+  .lives{color:var(--red)} .streak{color:var(--orange)} .scr{color:var(--yellow)}
+  .qbar{height:10px;background:rgba(20,18,50,.8);border-radius:99px;overflow:hidden;margin-bottom:14px;border:1px solid var(--line)}
+  .qbar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--green));transition:width .5s cubic-bezier(.3,1.4,.5,1);box-shadow:0 0 14px var(--cyan)}
+  #qStage{animation:slideIn .35s ease}
+  @keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+  .shake{animation:shk .4s}
+  @keyframes shk{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+  .qhead{display:flex;gap:14px;align-items:flex-start;margin-bottom:6px}
+  .miniProf{width:64px;height:64px;flex:0 0 64px;animation:bob 3.5s ease-in-out infinite}
+  .miniProf svg{width:100%;height:100%}
+  .tagrow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+  .tag{font-family:var(--mono);font-size:10.5px;padding:3px 9px;border-radius:99px;border:1px solid var(--line)}
+  .tag.eje{color:var(--cyan);background:rgba(77,225,255,.1)}
+  .tag.topic{color:var(--purple);background:rgba(176,123,255,.1)}
+  .scenario{position:relative;background:linear-gradient(180deg,#ffffff,#eef0ff);color:#1a1c33;border-radius:16px;padding:16px 18px;font-size:15px;line-height:1.55;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+  .scenario .lbl{font-family:var(--mono);font-size:11px;color:#6b46c1;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;font-weight:bold}
+  .scenario:before{content:'';position:absolute;top:18px;left:-9px;border:9px solid transparent;border-right-color:#fff}
+  .scnIllu{float:right;width:80px;height:80px;margin:0 0 8px 12px}
+  .scnIllu svg{width:100%;height:100%}
+  .qtext{font-size:16.5px;font-weight:700;margin:16px 0 14px;color:var(--ink)}
+  .qtext:before{content:'\2753 '}
+  .options{display:grid;gap:11px}
+  .opt{position:relative;padding-left:46px}
+  .opt .key{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:7px;background:rgba(122,90,255,.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:bold;font-size:13px}
+  .opt.correct{border-color:var(--green)!important;background:rgba(77,255,176,.16)!important;animation:goodPulse .5s}
+  @keyframes goodPulse{0%{box-shadow:0 0 0 0 rgba(77,255,176,.6)}100%{box-shadow:0 0 0 14px rgba(77,255,176,0)}}
+  .opt.wrong{border-color:var(--red)!important;background:rgba(255,93,122,.16)!important}
+  .opt:disabled{cursor:default;transform:none!important;box-shadow:none!important}
+  .opt .mk{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:20px}
+  .explain{display:none;margin-top:16px;background:rgba(40,38,90,.85);border:1px solid var(--line);border-left:4px solid var(--purple);border-radius:14px;padding:16px}
+  .explain.show{display:block;animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .explain h4{margin:0 0 6px;font-family:var(--mono);font-size:13px}
+  .explain h4.ok{color:var(--green)} .explain h4.no{color:var(--orange)}
+  .explain p{margin:6px 0;font-size:14px}
+  .explain .key2{color:var(--green);font-weight:700}
+  .navrow{margin-top:16px;display:flex;gap:10px;justify-content:flex-end}
+  #combo{position:fixed;top:30%;left:50%;transform:translateX(-50%) scale(.5);font-family:var(--mono);font-weight:bold;font-size:42px;color:var(--yellow);text-shadow:0 0 20px var(--orange);opacity:0;pointer-events:none;z-index:50;transition:.3s}
+  #combo.show{opacity:1;transform:translateX(-50%) scale(1)}
+  .result{text-align:center}
+  .result .big{font-size:64px;animation:bob 2s ease-in-out infinite}
+  .result .grade{font-family:var(--mono);font-size:clamp(46px,13vw,82px);font-weight:bold;line-height:1}
+  .result table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px}
+  .result td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;font-family:var(--mono)}
+  .result td:last-child{text-align:right}
+  .hit{color:var(--green)} .miss{color:var(--red)}
+  #fx{position:fixed;inset:0;pointer-events:none;z-index:40}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:22px;line-height:1.7;padding-bottom:20px}
+  .hide{display:none}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(40,38,90,.95);border:1px solid var(--cyan);padding:11px 20px;border-radius:14px;font-family:var(--mono);font-size:13px;opacity:0;transition:.3s;pointer-events:none;z-index:99}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div id="aurora"></div>
+<div id="stars"></div>
+<canvas id="fx"></canvas>
+<div id="combo"></div>
+<div class="wrap">
+  <h1 class="title">ALGO&nbsp;QUEST</h1>
+  <div class="subtitle">El Desafío del Profesor 🎓 · Paradigmas y Lenguajes de Programación I · UCP<br>Rendí tu final teórico: te planteo situaciones reales y preguntas de teoría, y elegís la respuesta correcta de todo el temario.</div>
+  <section id="home">
+    <div class="glass">
+      <div class="heroProf">
+        <div class="profWrap" id="homeProf"></div>
+        <div class="profName">— Prof. Alejandro Sebastián de León</div>
+        <div class="bubble" id="homeBubble">¡Bienvenido al final! Te voy a hacer preguntas de los 5 ejes: situaciones reales y definiciones teóricas. Vos elegí la opción correcta. ¿Empezamos? 😏</div>
+      </div>
+      <div style="font-family:var(--mono);color:var(--cyan);font-size:13px;margin:18px 0 2px">▶ ELEGÍ UN MODO</div>
+      <div class="modes">
+        <div class="mode" onclick="start('simulacro')"><span class="em">📝</span><div><b>Mesa de Final</b><small>15 preguntas mezcladas de todo el temario, con 3 vidas. Como rendir de verdad.</small></div></div>
+        <div class="mode" onclick="start('maraton')"><span class="em">🔥</span><div><b>Maratón de Repaso</b><small>Todas las preguntas en orden por eje. Sin presión, para estudiar a fondo.</small></div></div>
+        <div class="mode" onclick="showTopics()"><span class="em">🎯</span><div><b>Repaso por Tema</b><small>Atacá un solo tema: pilas, grafos, TAD, complejidad, metodología…</small></div></div>
+      </div>
+      <div id="topicPick" class="hide">
+        <div style="font-family:var(--mono);color:var(--purple);font-size:13px;margin:20px 0 2px">▶ ELEGÍ UN TEMA</div>
+        <div class="topics" id="topicGrid"></div>
+        <div style="margin-top:14px"><button class="btn ghost small" onclick="hideTopics()">← Volver</button></div>
+      </div>
+    </div>
+    <footer>Cada respuesta viene con la <b>explicación teórica</b> — la "defensa" que tenés que dar frente al profe. 🧠<br>
+      <span style="color:var(--cyan)">EJE I</span> Conceptos · <span style="color:var(--purple)">EJE II</span> Estructuras de Datos · <span style="color:var(--yellow)">EJE III</span> Eficiencia · <span style="color:var(--pink)">EJE IV</span> TAD y Complejidad · <span style="color:var(--green)">EJE V</span> Metodología</footer>
+  </section>
+  <section id="quiz" class="hide">
+    <div class="hud">
+      <span class="lives" id="lives">❤️❤️❤️</span><span class="streak" id="streak">🔥 0</span><span class="scr" id="scr">⭐ 0</span><span id="qnum">1/15</span>
+    </div>
+    <div class="qbar"><i id="qbarFill"></i></div>
+    <div class="glass" id="qStage">
+      <div class="qhead"><div class="miniProf" id="miniProf"></div>
+        <div style="flex:1"><div class="tagrow" id="tags"></div><div class="scenario" id="ctx"></div></div></div>
+      <p class="qtext" id="qtext"></p>
+      <div class="options" id="opts"></div>
+      <div class="explain" id="explain"></div>
+      <div class="navrow"><button class="btn primary small hide" id="nextBtn" onclick="nextQ()">Siguiente →</button></div>
+    </div>
+    <footer><button class="btn ghost small" onclick="quit()">✕ Salir al menú</button></footer>
+  </section>
+  <section id="results" class="hide"><div class="glass result" id="resultCard"></div></section>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+"use strict";
+const PROF_SVG = `<svg viewBox="0 0 100 100"><circle cx="50" cy="52" r="40" fill="#2a2660"/><ellipse cx="50" cy="58" rx="26" ry="28" fill="#f3c89b"/><path d="M22 44 Q50 8 78 44 Q70 30 50 28 Q30 30 22 44Z" fill="#3a3370"/><rect x="30" y="20" width="40" height="8" rx="2" fill="#1c1a45"/><rect x="20" y="26" width="60" height="5" rx="2" fill="#12102e"/><polygon points="62,22 78,18 79,23 63,27" fill="#ffd34e"/><circle cx="40" cy="55" r="8" fill="#fff"/><circle cx="60" cy="55" r="8" fill="#fff"/><circle cx="41" cy="56" r="3.4" fill="#222"/><circle cx="59" cy="56" r="3.4" fill="#222"/><rect x="31" y="49" width="18" height="2.4" fill="#1c1a45"/><rect x="51" y="49" width="18" height="2.4" fill="#1c1a45"/><rect x="48" y="49" width="4" height="2.4" fill="#1c1a45"/><path d="M42 70 Q50 76 58 70" stroke="#a35a3a" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`;
+function illu(t){
+  if(/Pila/.test(t)) return `<svg viewBox="0 0 80 80"><rect x="20" y="50" width="40" height="11" rx="2" fill="#4de1ff"/><rect x="20" y="37" width="40" height="11" rx="2" fill="#b07bff"/><rect x="20" y="24" width="40" height="11" rx="2" fill="#ff7bd5"><animate attributeName="y" values="24;14;24" dur="2s" repeatCount="indefinite"/></rect><text x="40" y="73" font-size="9" fill="#a3a8d8" text-anchor="middle" font-family="monospace">LIFO</text></svg>`;
+  if(/Cola/.test(t)) return `<svg viewBox="0 0 80 80"><rect x="8" y="32" width="14" height="14" rx="2" fill="#ff7bd5"><animate attributeName="x" values="58;8" dur="2.4s" repeatCount="indefinite"/></rect><rect x="26" y="32" width="14" height="14" rx="2" fill="#b07bff"/><rect x="44" y="32" width="14" height="14" rx="2" fill="#4de1ff"/><path d="M4 52 h60 M64 52 l-6 -4 M64 52 l-6 4" stroke="#a3a8d8" stroke-width="2" fill="none"/><text x="40" y="68" font-size="9" fill="#a3a8d8" text-anchor="middle" font-family="monospace">FIFO</text></svg>`;
+  if(/Lista/.test(t)) return `<svg viewBox="0 0 80 80"><g fill="#4de1ff"><rect x="6" y="34" width="16" height="12" rx="2"/><rect x="34" y="34" width="16" height="12" rx="2"/><rect x="62" y="34" width="14" height="12" rx="2"/></g><path d="M22 40 h12 M50 40 h12" stroke="#ffd34e" stroke-width="2"><animate attributeName="stroke-dasharray" values="0 14;14 0" dur="1.5s" repeatCount="indefinite"/></path></svg>`;
+  if(/Árbol/.test(t)) return `<svg viewBox="0 0 80 80"><line x1="40" y1="22" x2="22" y2="48" stroke="#a3a8d8" stroke-width="2"/><line x1="40" y1="22" x2="58" y2="48" stroke="#a3a8d8" stroke-width="2"/><circle cx="40" cy="20" r="9" fill="#4dffb0"/><circle cx="22" cy="50" r="8" fill="#b07bff"><animate attributeName="r" values="8;9.5;8" dur="2s" repeatCount="indefinite"/></circle><circle cx="58" cy="50" r="8" fill="#ff7bd5"/></svg>`;
+  if(/Grafos/.test(t)) return `<svg viewBox="0 0 80 80"><line x1="20" y1="22" x2="58" y2="30" stroke="#a3a8d8" stroke-width="1.6"/><line x1="20" y1="22" x2="30" y2="58" stroke="#a3a8d8" stroke-width="1.6"/><line x1="58" y1="30" x2="30" y2="58" stroke="#a3a8d8" stroke-width="1.6"/><line x1="58" y1="30" x2="62" y2="60" stroke="#a3a8d8" stroke-width="1.6"/><circle cx="20" cy="22" r="7" fill="#4de1ff"><animate attributeName="fill" values="#4de1ff;#4dffb0;#4de1ff" dur="2s" repeatCount="indefinite"/></circle><circle cx="58" cy="30" r="7" fill="#b07bff"/><circle cx="30" cy="58" r="7" fill="#ff7bd5"/><circle cx="62" cy="60" r="7" fill="#ffd34e"/></svg>`;
+  if(/Búsqueda/.test(t)) return `<svg viewBox="0 0 80 80"><g fill="#3a3370"><rect x="8" y="36" width="9" height="9"/><rect x="20" y="36" width="9" height="9"/><rect x="32" y="36" width="9" height="9" fill="#4dffb0"/><rect x="44" y="36" width="9" height="9"/><rect x="56" y="36" width="9" height="9"/></g><circle cx="36" cy="40" r="13" fill="none" stroke="#ffd34e" stroke-width="3"><animate attributeName="cx" values="13;60;36" dur="2.5s" repeatCount="indefinite"/></circle><line x1="46" y1="50" x2="56" y2="60" stroke="#ffd34e" stroke-width="3"/></svg>`;
+  if(/Ordenamiento/.test(t)) return `<svg viewBox="0 0 80 80"><rect x="10" y="40" width="9" height="24" fill="#4de1ff"><animate attributeName="height" values="24;48;24" dur="2s" repeatCount="indefinite"/><animate attributeName="y" values="40;16;40" dur="2s" repeatCount="indefinite"/></rect><rect x="22" y="28" width="9" height="36" fill="#b07bff"/><rect x="34" y="20" width="9" height="44" fill="#ff7bd5"/><rect x="46" y="36" width="9" height="28" fill="#ffd34e"/><rect x="58" y="48" width="9" height="16" fill="#4dffb0"/></svg>`;
+  if(/Recursi/.test(t)) return `<svg viewBox="0 0 80 80"><g fill="none" stroke-width="3"><circle cx="40" cy="40" r="26" stroke="#4de1ff"/><circle cx="40" cy="40" r="18" stroke="#b07bff"/><circle cx="40" cy="40" r="10" stroke="#ff7bd5"/></g><circle cx="40" cy="40" r="4" fill="#ffd34e"><animate attributeName="r" values="4;6;4" dur="1.5s" repeatCount="indefinite"/></circle></svg>`;
+  if(/Tipos|Pascal|Variable/.test(t)) return `<svg viewBox="0 0 80 80"><rect x="14" y="22" width="52" height="14" rx="3" fill="#4de1ff"/><rect x="14" y="42" width="52" height="14" rx="3" fill="#b07bff"><animate attributeName="width" values="52;40;52" dur="2s" repeatCount="indefinite"/></rect><text x="40" y="32" font-size="8" fill="#070718" text-anchor="middle" font-family="monospace">int</text><text x="40" y="52" font-size="8" fill="#070718" text-anchor="middle" font-family="monospace">str</text></svg>`;
+  if(/Centinela|Control de Flujo|Acumulador|Estructuras de Control/.test(t)) return `<svg viewBox="0 0 80 80"><path d="M40 14 a26 26 0 1 1 -18 7" fill="none" stroke="#4de1ff" stroke-width="4"/><path d="M22 21 l0 -10 l9 5 Z" fill="#4de1ff"/><circle cx="40" cy="40" r="6" fill="#ff5d7a"><animate attributeName="fill" values="#ff5d7a;#ffd34e;#ff5d7a" dur="1.4s" repeatCount="indefinite"/></circle></svg>`;
+  if(/Complejidad/.test(t)) return `<svg viewBox="0 0 80 80"><path d="M12 64 L24 60 L36 50 L48 34 L60 12" fill="none" stroke="#ff5d7a" stroke-width="3"/><path d="M12 64 L68 60" fill="none" stroke="#4dffb0" stroke-width="3"/><path d="M12 12 V64 H68" fill="none" stroke="#a3a8d8" stroke-width="2"/></svg>`;
+  if(/Arreglo/.test(t)) return `<svg viewBox="0 0 80 80"><g fill="#4de1ff"><rect x="8" y="34" width="11" height="12" rx="2"/><rect x="21" y="34" width="11" height="12" rx="2"/><rect x="34" y="34" width="11" height="12" rx="2"/><rect x="47" y="34" width="11" height="12" rx="2"/><rect x="60" y="34" width="11" height="12" rx="2"/></g><text x="40" y="60" font-size="8" fill="#a3a8d8" text-anchor="middle" font-family="monospace">[0][1][2]</text></svg>`;
+  if(/Archivo/.test(t)) return `<svg viewBox="0 0 80 80"><path d="M16 24 h18 l5 6 h25 v32 h-48 Z" fill="#4dffb0"/><rect x="16" y="30" width="48" height="26" fill="#13c98a"/><circle cx="58" cy="56" r="9" fill="#ffd34e"><animate attributeName="cy" values="56;52;56" dur="2s" repeatCount="indefinite"/></circle></svg>`;
+  if(/Hashing/.test(t)) return `<svg viewBox="0 0 80 80"><rect x="12" y="20" width="14" height="14" rx="2" fill="#ffd34e"/><text x="19" y="30" font-size="9" fill="#070718" text-anchor="middle" font-family="monospace">k</text><path d="M26 27 h14" stroke="#a3a8d8" stroke-width="2"/><g fill="#b07bff"><rect x="44" y="14" width="22" height="9" rx="2"/><rect x="44" y="25" width="22" height="9" rx="2"/><rect x="44" y="36" width="22" height="9" rx="2"><animate attributeName="fill" values="#b07bff;#4dffb0;#b07bff" dur="1.8s" repeatCount="indefinite"/></rect><rect x="44" y="47" width="22" height="9" rx="2"/></g></svg>`;
+  if(/TAD|Encapsul/.test(t)) return `<svg viewBox="0 0 80 80"><path d="M40 14 L64 26 V54 L40 66 L16 54 V26 Z" fill="none" stroke="#b07bff" stroke-width="3"/><path d="M40 14 L64 26 L40 38 L16 26 Z" fill="#b07bff" opacity=".5"/><circle cx="40" cy="48" r="7" fill="#ffd34e"><animate attributeName="r" values="7;9;7" dur="2s" repeatCount="indefinite"/></circle></svg>`;
+  if(/Versiones/.test(t)) return `<svg viewBox="0 0 80 80"><line x1="26" y1="14" x2="26" y2="66" stroke="#a3a8d8" stroke-width="3"/><path d="M26 34 Q26 24 50 24" fill="none" stroke="#4dffb0" stroke-width="3"/><circle cx="26" cy="20" r="6" fill="#4de1ff"/><circle cx="26" cy="44" r="6" fill="#4de1ff"/><circle cx="26" cy="62" r="6" fill="#4de1ff"/><circle cx="54" cy="24" r="6" fill="#4dffb0"><animate attributeName="fill" values="#4dffb0;#ffd34e;#4dffb0" dur="2s" repeatCount="indefinite"/></circle></svg>`;
+  if(/IDE|Depuración|Pruebas|Testing/.test(t)) return `<svg viewBox="0 0 80 80"><ellipse cx="40" cy="44" rx="15" ry="19" fill="#ff5d7a"/><circle cx="34" cy="40" r="2.5" fill="#fff"/><circle cx="46" cy="40" r="2.5" fill="#fff"/><path d="M25 44 h-11 M55 44 h11 M25 54 l-9 5 M55 54 l9 5 M25 36 l-9 -5 M55 36 l9 -5 M40 25 v-9" stroke="#a3a8d8" stroke-width="2"/><circle cx="40" cy="44" r="20" fill="none" stroke="#ffd34e" stroke-width="2" stroke-dasharray="4 4"><animateTransform attributeName="transform" type="rotate" from="0 40 44" to="360 40 44" dur="8s" repeatCount="indefinite"/></circle></svg>`;
+  return `<svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="22" fill="none" stroke="#4de1ff" stroke-width="3"/><circle cx="40" cy="40" r="6" fill="#ffd34e"/><g stroke="#b07bff" stroke-width="3"><line x1="40" y1="14" x2="40" y2="22"/><line x1="40" y1="58" x2="40" y2="66"/><line x1="14" y1="40" x2="22" y2="40"/><line x1="58" y1="40" x2="66" y2="40"/></g><animateTransform attributeName="transform" type="rotate" from="0 40 40" to="360 40 40" dur="10s" repeatCount="indefinite"/></svg>`;
+}
+const Q = [
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Variables y Tipos',emoji:'🔤',
+ ctx:'Un programador junior viene de programar en <b>Pascal</b>, donde siempre declaraba <code>var edad: integer;</code> antes de usar una variable. Ahora lo pasan a un proyecto en <b>Python</b> y escribe <code>edad = 25</code> y más abajo, en el mismo programa, reutiliza <code>edad = "veinticinco"</code>. Le preocupa que el programa explote por mezclar un número con un texto en la misma variable.',
+ q:'¿Qué le explicarías sobre por qué Python lo permite?',
+ opts:['Python es de <b>tipado dinámico</b>: la variable no tiene tipo fijo; toma el tipo del valor en tiempo de ejecución, así que puede pasar de int a str sin error','Python convierte automáticamente todo a texto, por eso nunca falla','Es un error que igual rompería el programa al ejecutarlo','Python obliga a declarar el tipo, solo que lo hace de forma oculta'],
+ correct:0,
+ explain:'En el <span class="key2">tipado dinámico</span> de Python la variable es una etiqueta que apunta a un valor; el tipo lo define el valor en tiempo de ejecución. Por eso la misma variable puede guardar un entero y luego una cadena. En Pascal (tipado estático) eso daría error de compilación.'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Pascal vs Python',emoji:'🐍',
+ ctx:'En el final te muestran dos fragmentos que hacen lo mismo: uno en Pascal con <code>program Suma; var a,b: integer; begin ... end.</code> y otro en Python con apenas <code>a = 5; b = 3; print(a+b)</code>. El profe te pregunta por la diferencia conceptual entre ambos lenguajes.',
+ q:'¿Cuál es la distinción central correcta?',
+ opts:['Pascal es de <b>tipado estático</b> (declarás el tipo y se verifica al compilar); Python es de <b>tipado dinámico</b> e interpretado','Python es más viejo y compilado; Pascal es moderno e interpretado','Pascal no permite estructuras de control como if o for','Ambos exigen declarar el tipo de cada variable igual'],
+ correct:0,
+ explain:'<span class="key2">Pascal</span> es tipado estático y muy estructurado: el tipo se declara y se chequea en compilación. <span class="key2">Python</span> es de tipado dinámico e interpretado: más flexible y conciso, pero los errores de tipo aparecen recién al ejecutar.'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Centinela',emoji:'🛑',
+ ctx:'Hacés un programa para una veterinaria que carga los pesos de los perros que llegan en el día. No se sabe cuántos vendrán, así que el sistema sigue pidiendo pesos y, cuando el operador termina, escribe <code>-1</code> para cortar. Al final hay que mostrar el promedio de peso.',
+ q:'¿Cómo manejás ese <code>-1</code> dentro del bucle de carga?',
+ opts:['Es un <b>valor centinela</b>: corta el bucle pero NO se suma ni se cuenta para el promedio','Se suma como un peso más porque entró en la carga','Se usa un for con cantidad fija de iteraciones','Se ordena la lista y se aplica búsqueda binaria del -1'],
+ correct:0,
+ explain:'El <span class="key2">valor centinela</span> marca el fin de los datos en un bucle de cantidad desconocida (por eso while, no for). Solo corta; si lo incluyeras en el promedio, sumarías -1 y contarías un dato de más, falseando el resultado.'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Acumulador',emoji:'➕',
+ ctx:'El profe te da este proceso a mano: partís de un acumulador en <code>0</code> y recorrés la lista <code>[1, 2, 3, 4, 5]</code>. Por cada número, si es <b>impar</b> MULTIPLICÁS el acumulador por ese número; si es <b>par</b> le SUMÁS el número.',
+ q:'¿Cuál es el valor final del acumulador?',
+ opts:['<b>50</b> — siguiendo el proceso: 0×1=0, +2=2, ×3=6, +4=10, ×5=50','15 — porque al final suma todos los elementos','6 — porque solo cuentan los pares 2+4','0 — porque el primer impar lo multiplica todo por 0'],
+ correct:0,
+ explain:'Hay que seguir el orden y la operación según paridad: 0×1=0 → 0+2=2 → 2×3=6 → 6+4=10 → 10×5=<span class="key2">50</span>. Es un clásico de "seguir la traza"; el truco está en respetar el orden de las operaciones.'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Estructuras de Control',emoji:'🔁',
+ ctx:'Tenés que programar dos cosas distintas: (A) imprimir los 12 meses del año, y (B) seguir pidiéndole la clave a un usuario hasta que la ingrese correctamente, sin saber cuántos intentos hará.',
+ q:'¿Qué estructura de control conviene en cada caso?',
+ opts:['Para (A) un <b>for</b> (iteraciones conocidas) y para (B) un <b>while</b> (repetir según una condición desconocida)','Un for para ambos casos, siempre','Un while para ambos casos, siempre','Un if-else para (A) y recursividad sin caso base para (B)'],
+ correct:0,
+ explain:'El <span class="key2">for</span> se usa cuando se conoce la cantidad de repeticiones (los 12 meses). El <span class="key2">while</span> cuando la repetición depende de una condición que se evalúa cada vuelta y no se sabe cuántas veces será (los intentos de clave).'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Pila (Stack)',emoji:'🧱',
+ ctx:'Desarrollás un editor de texto y tu jefe te pide la función <b>"Deshacer" (Ctrl+Z)</b>: cada acción del usuario (escribir, borrar, pegar) debe poder revertirse, y siempre se deshace primero la última acción realizada, después la anterior, y así hacia atrás.',
+ q:'¿Qué estructura de datos modela mejor el "Deshacer"?',
+ opts:['<b>Pila (Stack)</b>: cada acción se apila; al deshacer, sale primero la última realizada (LIFO)','Cola (Queue): se deshacen en el orden en que se hicieron (FIFO)','Árbol binario de búsqueda, para ordenar las acciones','Lista ordenada con búsqueda binaria por timestamp'],
+ correct:0,
+ explain:'El "Deshacer" es <span class="key2">LIFO</span>: la última acción es la primera en revertirse. Eso es una <span class="key2">Pila</span> — push al hacer una acción, pop al deshacerla. El botón "Atrás" del navegador funciona igual.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Pila (Stack)',emoji:'🧱',
+ ctx:'Un compañero asegura: "la pila y la cola son casi lo mismo; en la pila <code>push</code> mete al final y <code>pop</code> saca del inicio, igual que una fila de gente". El profe te pregunta si eso es correcto.',
+ q:'¿Qué corregirías de esa afirmación?',
+ opts:['En la pila push y pop operan sobre el <b>mismo extremo</b> (el tope): es LIFO, no FIFO. Sacar del inicio (FIFO) es la cola','Está correcto: la pila es FIFO igual que una fila de gente','Está correcto, pero solo si la pila está ordenada','La pila no tiene operación pop, solo push'],
+ correct:0,
+ explain:'La <span class="key2">pila es LIFO</span>: push apila arriba y pop saca de arriba, siempre el mismo extremo (el tope). La <span class="key2">cola es FIFO</span>: entra por un extremo y sale por el otro, como una fila de gente. Confundirlos es un error típico de parcial.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Pila (Stack)',emoji:'🧱',
+ ctx:'Programás el corrector de un IDE que valida que cada paréntesis, corchete y llave esté bien cerrado en el orden correcto: <code>( [ { } ] )</code> es válido pero <code>( [ ) ]</code> no.',
+ q:'¿Qué estructura usás para verificar el balanceo de símbolos?',
+ opts:['<b>Pila</b>: apilás cada símbolo de apertura y, al llegar un cierre, debe coincidir con el del tope','Cola: encolás aperturas y desencolás en orden de llegada','Búsqueda binaria sobre los símbolos ordenados','Un árbol binario balanceado'],
+ correct:0,
+ explain:'El balanceo de símbolos es un uso clásico de la <span class="key2">Pila</span>: cada apertura se apila; cada cierre debe coincidir con el tope (lo último que se abrió). Si al terminar la pila quedó vacía, está balanceado.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Cola (Queue)',emoji:'🍕',
+ ctx:'En el local <b>FastPizza & Burgers</b> los pedidos se atienden estrictamente en el orden en que llegan: el primer cliente que pide es el primero en recibir su comida, sin excepciones ni prioridades.',
+ q:'¿Qué estructura modela mejor esta fila de pedidos?',
+ opts:['<b>Cola (Queue)</b>: FIFO, el primero en entrar es el primero en salir','Pila (Stack): LIFO, se atiende primero al último que llegó','Árbol binario, para ordenar pedidos por precio','Lista doblemente enlazada, para atender desde ambos extremos'],
+ correct:0,
+ explain:'Atender en orden de llegada es <span class="key2">FIFO</span> → una <span class="key2">Cola</span>: enqueue cuando entra el pedido, dequeue del frente cuando se atiende. Una pila sería injusta: atendería primero al último que llegó.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Cola (Queue)',emoji:'🍕',
+ ctx:'Una oficina comparte una sola impresora entre 20 empleados. Durante la mañana se envían decenas de documentos y todos deben imprimirse respetando el orden en que se mandaron, para que nadie "se cuele".',
+ q:'¿Qué estructura administra la cola de impresión?',
+ opts:['<b>Cola</b>: los trabajos se imprimen en el mismo orden en que fueron enviados (FIFO)','Pila: se imprime primero el documento enviado más recientemente','Árbol binario de búsqueda por nombre de archivo','Búsqueda binaria para encontrar el próximo a imprimir'],
+ correct:0,
+ explain:'La cola de impresión es el ejemplo canónico de <span class="key2">Cola/FIFO</span>: respeta el orden de llegada para ser justa. Si fuera una pila, el último en enviar imprimiría primero y los primeros nunca saldrían si entran nuevos.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Lista Enlazada',emoji:'🔗',
+ ctx:'Un colega dice que da igual usar un arreglo o una lista enlazada simple porque "acceder al elemento de la posición 1000 cuesta lo mismo en los dos". Vos sabés que no es así.',
+ q:'¿Por qué el acceso por posición NO es igual de eficiente?',
+ opts:['El arreglo accede por índice en <b>O(1)</b> (posición contigua en memoria); la lista enlazada debe recorrer nodo por nodo desde la cabeza → <b>O(n)</b>','La lista enlazada es siempre más rápida porque usa punteros','Ambos son O(1) porque guardan los datos contiguos','El arreglo es O(n) y la lista enlazada O(1)'],
+ correct:0,
+ explain:'El <span class="key2">arreglo</span> guarda elementos contiguos y calcula la dirección del índice directamente → acceso <span class="key2">O(1)</span>. La <span class="key2">lista enlazada</span> no es contigua: para llegar al elemento n hay que seguir los punteros uno por uno desde la cabeza → <span class="key2">O(n)</span>.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Lista Enlazada',emoji:'🔗',
+ ctx:'Modelás la lista de tareas de una app donde el usuario constantemente inserta tareas nuevas en el medio y elimina otras, pero casi nunca accede a "la tarea número 7". El equipo duda entre un arreglo y una lista enlazada.',
+ q:'¿Qué estructura conviene y por qué?',
+ opts:['<b>Lista enlazada</b>: insertar/eliminar en el medio solo reconecta punteros, sin desplazar el resto de los elementos','Arreglo: porque insertar en el medio es O(1)','Pila: porque solo se opera en un extremo','Árbol binario: porque las tareas deben estar siempre ordenadas'],
+ correct:0,
+ explain:'Cuando predominan inserciones y eliminaciones (y no el acceso por índice), gana la <span class="key2">lista enlazada</span>: reconecta punteros en O(1) una vez ubicado el nodo. El arreglo tendría que desplazar todos los elementos posteriores en cada inserción/borrado.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Lista Doble/Circular',emoji:'⛓️',
+ ctx:'Programás el reproductor de música de una app: el usuario debe poder ir a la canción "siguiente" y también a la "anterior", y cuando llega a la última canción de la playlist, el botón "siguiente" debe volver a la primera (modo repetir).',
+ q:'¿Qué variante de lista usás?',
+ opts:['<b>Lista doblemente enlazada circular</b>: cada nodo apunta al siguiente y al anterior, y el último se conecta con el primero','Lista simplemente enlazada: alcanza con un solo puntero','Pila: porque LIFO sirve para reproducir música','Cola simple: porque las canciones se atienden en orden FIFO'],
+ correct:0,
+ explain:'Para moverse en ambos sentidos necesitás una <span class="key2">lista doblemente enlazada</span> (punteros al siguiente y al anterior). Para que la última vuelva a la primera, la versión <span class="key2">circular</span> conecta el último nodo con el primero.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Recursividad',emoji:'🌀',
+ ctx:'Un alumno escribe una función recursiva para calcular el factorial, pero al ejecutarla el programa se cuelga con el error <b>"maximum recursion depth exceeded" / stack overflow</b>.',
+ q:'¿Cuál es la causa más probable del error?',
+ opts:['Falta el <b>caso base</b> o nunca se alcanza, entonces la función se llama a sí misma infinitamente y agota la pila','Usó multiplicación en lugar de suma en el caso recursivo','La recursividad no sirve para calcular factoriales','No ordenó los datos antes de aplicar la recursión'],
+ correct:0,
+ explain:'Toda recursión necesita un <span class="key2">caso base</span> que la detenga. Si falta o el caso recursivo no se acerca a él, las llamadas se apilan sin fin hasta agotar la pila de ejecución → stack overflow.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Recursividad',emoji:'🌀',
+ ctx:'Tenés que recorrer todas las carpetas y subcarpetas de un disco para listar cada archivo. Una carpeta puede contener archivos y también otras carpetas, que a su vez contienen más carpetas, sin un límite de profundidad conocido.',
+ q:'¿Qué enfoque es el más natural para resolverlo?',
+ opts:['<b>Recursividad</b>: la función procesa una carpeta y se llama a sí misma sobre cada subcarpeta (caso base: carpeta sin subcarpetas)','Un solo for, porque la profundidad siempre es 1','Búsqueda binaria sobre los nombres de archivo','Una pila FIFO de carpetas'],
+ correct:0,
+ explain:'Las estructuras anidadas de profundidad desconocida (carpetas dentro de carpetas, árboles) se resuelven con <span class="key2">recursividad</span>: cada llamada procesa un nivel y se invoca sobre los sub-niveles. El caso base es una carpeta sin más subcarpetas.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Árbol Binario (ABB)',emoji:'🌳',
+ ctx:'Guardaste los socios de un club en un <b>Árbol Binario de Búsqueda (ABB)</b> por número de socio (menores a la izquierda, mayores a la derecha). Ahora te piden listar a TODOS los socios ordenados de menor a mayor número, sin volver a ordenarlos aparte.',
+ q:'¿Qué recorrido del árbol usás?',
+ opts:['Recorrido <b>inorden</b> (izquierda → raíz → derecha): en un ABB devuelve los valores ya ordenados','Recorrido preorden (raíz → izquierda → derecha)','Recorrido postorden (izquierda → derecha → raíz)','Recorrido en anchura (BFS) por niveles'],
+ correct:0,
+ explain:'En un ABB el recorrido <span class="key2">inorden</span> (izq → raíz → der) visita los valores en orden ascendente, porque los menores están a la izquierda y los mayores a la derecha de cada nodo. Sale ordenado "gratis".'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Árbol Binario (ABB)',emoji:'🌳',
+ ctx:'Una agenda de contactos crece a miles de entradas. Necesitás <b>buscar</b> un contacto muy rápido, pero también seguir <b>insertando</b> contactos nuevos manteniendo todo ordenado para poder listarlos alfabéticamente cuando haga falta.',
+ q:'¿Qué estructura equilibra búsqueda rápida e inserción ordenada?',
+ opts:['<b>Árbol Binario de Búsqueda</b>: búsqueda O(log n) si está balanceado, e inserción manteniendo el orden','Lista enlazada simple: búsqueda O(1)','Pila: porque mantiene los datos apilados y ordenados','Cola: porque respeta el orden de llegada de los contactos'],
+ correct:0,
+ explain:'El <span class="key2">ABB</span> descarta la mitad del árbol en cada comparación (como la binaria), logrando búsqueda <span class="key2">O(log n)</span> cuando está balanceado, y permite insertar manteniendo el orden. Una lista enlazada buscaría en O(n).'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Grafos — BFS',emoji:'🗺️',
+ ctx:'Programás el motor de IA del juego <b>"Laberinto"</b>. El enemigo debe encontrar el <b>camino más corto</b> (menor cantidad de pasos) desde su posición hasta el jugador, en una grilla donde todos los movimientos cuestan lo mismo.',
+ q:'¿Qué recorrido de grafo garantiza el camino más corto?',
+ opts:['<b>BFS (en anchura)</b>: explora por niveles con una cola, así que llega a la salida por el camino más corto en cantidad de pasos','DFS (en profundidad): siempre encuentra el camino más corto','Búsqueda binaria sobre las casillas','Ordenamiento burbuja de las posiciones'],
+ correct:0,
+ explain:'<span class="key2">BFS</span> avanza por niveles usando una cola, por lo que la primera vez que alcanza el destino lo hace con la menor cantidad de pasos (camino más corto en grafos sin pesos). DFS se mete a fondo por una rama y no garantiza el más corto.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Grafos — DFS',emoji:'🧭',
+ ctx:'Tenés un grafo que representa dependencias entre módulos de software y querés <b>detectar si hay un ciclo</b> (una dependencia circular), explorando cada rama a fondo hasta el final antes de retroceder.',
+ q:'¿Qué recorrido es el más natural?',
+ opts:['<b>DFS (en profundidad)</b>: avanza a fondo por cada rama usando pila o recursión, ideal para detectar ciclos','BFS (en anchura): siempre es mejor para cualquier problema de grafos','Búsqueda binaria sobre los nodos ordenados','Ordenamiento por inserción de las aristas'],
+ correct:0,
+ explain:'<span class="key2">DFS</span> profundiza por una rama antes de retroceder (backtracking), apoyándose en pila o recursión. Es ideal para detectar ciclos, explorar rutas completas o verificar conectividad. BFS conviene cuando importa la distancia mínima.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Grafos — BFS',emoji:'🗺️',
+ ctx:'En una red social querés calcular los <b>"grados de separación"</b>: cuántos saltos de amistad hay como mínimo entre dos personas (el famoso "amigo de un amigo de un amigo").',
+ q:'¿Qué algoritmo usás?',
+ opts:['<b>BFS</b>: al explorar por niveles, encuentra la menor cantidad de saltos entre dos personas','DFS: porque profundizar siempre da la distancia mínima','Ordenamiento burbuja de los contactos','Búsqueda binaria sobre la lista de amigos'],
+ correct:0,
+ explain:'Los grados de separación son el <span class="key2">camino más corto</span> en un grafo sin pesos → <span class="key2">BFS</span>. Explora primero los amigos directos (nivel 1), luego los amigos de amigos (nivel 2), etc., garantizando la mínima cantidad de saltos.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Grafos — DFS',emoji:'🧭',
+ ctx:'El profe te pregunta por la estructura auxiliar interna que usa cada recorrido de grafos para decidir qué nodo visitar a continuación.',
+ q:'¿Qué estructura usa cada uno?',
+ opts:['<b>BFS usa una cola</b> (procesa por niveles, FIFO) y <b>DFS usa una pila</b> o la recursión (profundiza, LIFO)','BFS usa una pila y DFS usa una cola','Ambos usan un árbol binario de búsqueda','Ambos usan búsqueda binaria internamente'],
+ correct:0,
+ explain:'<span class="key2">BFS → cola</span>: saca el más antiguo y procesa por niveles. <span class="key2">DFS → pila</span> (explícita o la de la recursión): saca el más reciente y profundiza. Recordar este par es clave para justificar en el final.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Búsqueda Binaria',emoji:'🎯',
+ ctx:'Un compañero propone: "tengo los datos en una lista enlazada simple; voy a aplicar búsqueda binaria sobre ella para pasar de O(n) a O(log n) y buscar más rápido".',
+ q:'¿Por qué su plan NO va a funcionar?',
+ opts:['La búsqueda binaria necesita <b>acceso directo al elemento del medio</b> (por índice), y en una lista enlazada llegar al medio ya cuesta O(n)','Funciona perfecto: la lista enlazada permite saltar al medio en O(1)','No funciona porque la búsqueda binaria solo sirve para números pares','Funciona, pero solo si la lista está desordenada'],
+ correct:0,
+ explain:'La <span class="key2">búsqueda binaria</span> exige datos <b>ordenados</b> y <b>acceso directo al medio</b> (índice), que solo da un arreglo. En una lista enlazada llegar al medio cuesta O(n), así que no se logra O(log n). Por eso binaria va con arreglos, no con listas enlazadas.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Búsqueda Binaria',emoji:'🎯',
+ ctx:'Tenés una guía telefónica digital con 2 millones de números <b>ordenados alfabéticamente</b> y necesitás encontrar a una persona puntual lo más rápido posible.',
+ q:'¿Qué algoritmo de búsqueda conviene?',
+ opts:['<b>Búsqueda binaria</b>: al estar ordenada, descarta la mitad en cada paso → O(log n), encuentra en ~21 comparaciones','Búsqueda lineal: recorre uno por uno desde el principio','Ordenamiento burbuja antes de buscar cada vez','BFS sobre la guía telefónica'],
+ correct:0,
+ explain:'Con datos <span class="key2">ordenados</span>, la <span class="key2">búsqueda binaria</span> es O(log n): en unas 21 comparaciones resuelve 2 millones de registros. La lineal podría requerir hasta 2 millones de comparaciones.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Búsqueda Lineal',emoji:'🔍',
+ ctx:'Llega un archivo de log con miles de eventos en el orden en que ocurrieron (sin ordenar por ningún campo), y necesitás encontrar el primer evento con código de error 500. No podés ordenarlo porque importa el orden cronológico.',
+ q:'¿Qué búsqueda aplicás?',
+ opts:['<b>Búsqueda lineal</b>: recorre uno por uno; la binaria no aplica porque requiere datos ordenados','Búsqueda binaria: funciona igual en datos desordenados','No se puede buscar en datos desordenados','Recorrido inorden de un árbol'],
+ correct:0,
+ explain:'Si los datos NO están ordenados (y no se pueden ordenar), la <span class="key2">binaria no aplica</span>: su precondición es el orden. Queda la <span class="key2">búsqueda lineal</span> O(n), que recorre elemento por elemento sin exigir orden.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Ordenamiento',emoji:'🫧',
+ ctx:'El profe describe un algoritmo: "recorre la lista comparando cada elemento con su vecino de al lado; si están en el orden equivocado los intercambia, y repite pasadas hasta que ninguna haga falta. Los valores más grandes van quedando al final".',
+ q:'¿De qué algoritmo de ordenamiento habla?',
+ opts:['<b>Ordenamiento burbuja (bubble sort)</b>: compara e intercambia vecinos en pasadas repetidas, O(n²)','Búsqueda binaria','Ordenamiento por inserción','Recorrido BFS'],
+ correct:0,
+ explain:'Comparar e intercambiar <span class="key2">vecinos</span> en pasadas repetidas, "burbujeando" los mayores al final, es el <span class="key2">ordenamiento burbuja</span>. Es O(n²): simple de entender pero ineficiente para grandes volúmenes.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Ordenamiento',emoji:'🫧',
+ ctx:'Otro algoritmo funciona así: "toma el segundo elemento y lo ubica respecto del primero; toma el tercero y lo inserta en su posición correcta entre los ya ordenados; y así con cada uno, como cuando ordenás las cartas en la mano".',
+ q:'¿Qué algoritmo es?',
+ opts:['<b>Ordenamiento por inserción (insertion sort)</b>: inserta cada elemento en su lugar dentro de la parte ya ordenada','Ordenamiento burbuja','Búsqueda lineal','Recorrido en profundidad (DFS)'],
+ correct:0,
+ explain:'Tomar cada elemento e <span class="key2">insertarlo</span> en su posición dentro de la sublista ya ordenada (analogía de las cartas en la mano) es el <span class="key2">ordenamiento por inserción</span>. Es muy eficiente cuando la lista ya está casi ordenada.'},
+{eje:'IV',ejeName:'Abstracción y Complejidad',topic:'Complejidad',emoji:'📈',
+ ctx:'Medís un algoritmo y notás que con 1.000 datos tarda 1 segundo, con 2.000 datos tarda 4 segundos y con 4.000 tarda 16 segundos. Es decir, al duplicar la entrada el tiempo se multiplica por 4.',
+ q:'¿Cuál es su complejidad temporal?',
+ opts:['<b>O(n²)</b> — cuadrática: duplicar n multiplica el tiempo por 2² = 4','O(n) — lineal: el tiempo solo se duplicaría','O(log n) — logarítmica: casi no crece','O(1) — constante: tardaría siempre lo mismo'],
+ correct:0,
+ explain:'Si al duplicar n el tiempo se multiplica por 4 (=2²), la complejidad es <span class="key2">O(n²)</span> (cuadrática), típica de dos bucles anidados como la burbuja. La lineal O(n) solo se duplicaría; la logarítmica casi no crecería.'},
+{eje:'IV',ejeName:'Abstracción y Complejidad',topic:'Complejidad',emoji:'📈',
+ ctx:'Comparás dos operaciones: (A) leer el elemento de la posición 500 de un arreglo, y (B) buscar si un valor existe recorriendo una lista enlazada desordenada de 500 nodos.',
+ q:'¿Cómo se comparan sus costos?',
+ opts:['(A) es <b>O(1)</b> — acceso directo por índice; (B) es <b>O(n)</b> — hay que recorrer hasta encontrarlo o llegar al final','Ambas son O(1) porque tienen 500 elementos','Ambas son O(n) porque hay que recorrer','(A) es O(n) y (B) es O(1)'],
+ correct:0,
+ explain:'Acceder por índice en un arreglo es <span class="key2">O(1)</span> (cálculo directo de la posición). Buscar un valor en una lista enlazada desordenada es <span class="key2">O(n)</span>: en el peor caso recorrés todos los nodos. Elegir bien la estructura cambia el costo.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Optimización',emoji:'⚙️',
+ ctx:'En un proyecto el equipo discute qué estructura usar "porque una es mejor que las otras". El profe te pide el criterio correcto para optimizar (hacer más con menos tiempo y memoria).',
+ q:'¿Cuál es el criterio correcto?',
+ opts:['Elegir según el <b>patrón de operaciones que predomina</b>: acceso por índice → arreglo; muchas inserciones → lista enlazada; LIFO → pila; FIFO → cola; búsqueda en datos ordenados → binaria/ABB','Usar siempre la estructura más nueva o moderna','Optimizar siempre la memoria aunque el tiempo crezca sin control','La burbuja y la lista enlazada son siempre la mejor opción'],
+ correct:0,
+ explain:'No existe una estructura "mejor" universal: optimizar es <span class="key2">elegir según el problema</span> y la operación dominante. El arte está en analizar qué se hace más (acceder, insertar, buscar, ordenar) y elegir la estructura/algoritmo con mejor complejidad para ese caso.'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Variables y Tipos',emoji:'🔤',
+ q:'¿Qué es el <b>tipado dinámico</b> de un lenguaje como Python?',
+ opts:['Que el tipo de una variable se determina en tiempo de ejecución según el valor que se le asigna, sin declararlo de antemano','Que todas las variables son obligatoriamente de tipo texto','Que el tipo se declara al inicio y no puede cambiar nunca','Que el lenguaje no tiene tipos de datos'],
+ correct:0,
+ explain:'<span class="key2">Tipado dinámico</span>: el tipo lo define el valor en tiempo de ejecución y puede cambiar durante el programa. Es lo opuesto al tipado estático de Pascal, donde el tipo se declara y se verifica al compilar.'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Pascal vs Python',emoji:'🐍',
+ q:'¿Qué caracteriza al <b>paradigma estructurado</b>?',
+ opts:['Programar con secuencia, selección (if) e iteración (bucles), evitando saltos arbitrarios (GOTO) y usando funciones/procedimientos','Organizar todo en objetos con herencia y polimorfismo','Describir qué se quiere sin indicar cómo, mediante reglas lógicas','Ejecutar instrucciones en paralelo siempre'],
+ correct:0,
+ explain:'El <span class="key2">paradigma estructurado</span> se basa en tres estructuras de control —secuencia, selección e iteración— y en dividir el programa en funciones/procedimientos, evitando el GOTO. Favorece código legible y mantenible.'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Centinela',emoji:'🛑',
+ q:'¿Qué es un <b>valor centinela</b> en un bucle?',
+ opts:['Un valor especial que marca el fin de la carga de datos y NO se procesa como un dato más','El primer valor que se carga en el bucle, que sí se procesa','Una variable que cuenta cuántas vueltas dio el bucle','El valor más grande de toda la lista'],
+ correct:0,
+ explain:'El <span class="key2">valor centinela</span> es una marca de "fin de datos" en bucles de cantidad desconocida. Solo sirve para cortar la repetición; no debe incluirse en sumas, promedios ni conteos.'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Acumulador',emoji:'➕',
+ q:'¿Qué es un <b>acumulador</b>?',
+ opts:['Una variable que va guardando un resultado parcial (suma, producto, conteo) que se actualiza en cada vuelta del bucle','Una estructura que almacena todos los elementos de una lista a la vez','Un valor que marca el fin de la carga de datos','Una función que ordena la lista'],
+ correct:0,
+ explain:'Un <span class="key2">acumulador</span> es una variable que arrastra un resultado parcial y se actualiza en cada iteración (típicamente inicia en 0 para sumas o en 1 para productos). Es base de promedios, totales y contadores.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Pila (Stack)',emoji:'🧱',
+ q:'¿Qué es una <b>pila (stack)</b> y qué principio sigue?',
+ opts:['Una estructura LIFO: el último elemento en entrar es el primero en salir; se opera siempre por el tope (push/pop)','Una estructura FIFO: el primero en entrar es el primero en salir','Una estructura que ordena los elementos automáticamente','Una estructura con acceso directo por índice en O(1)'],
+ correct:0,
+ explain:'La <span class="key2">pila</span> es LIFO (Last In, First Out): push apila en el tope y pop saca del tope. Modela el "Deshacer" y el botón "Atrás". Confundirla con FIFO (cola) es un error clásico.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Cola (Queue)',emoji:'🍕',
+ q:'¿Qué nos dice el principio <b>FIFO</b> de una cola?',
+ opts:['First In, First Out: el primer elemento en entrar es el primero en salir; se encola al final y se desencola del frente','Last In, First Out: sale primero el último que entró','Que los elementos se procesan en orden aleatorio','Que la estructura mantiene los datos ordenados de menor a mayor'],
+ correct:0,
+ explain:'<span class="key2">FIFO</span> (First In, First Out) describe a la <span class="key2">cola</span>: entra por el final (enqueue) y sale por el frente (dequeue). Modela filas justas: impresora, atención de pedidos, etc.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Lista Enlazada',emoji:'🔗',
+ q:'¿Qué es un <b>nodo</b> en una lista enlazada?',
+ opts:['Un elemento que contiene un dato y una referencia (puntero) al siguiente nodo de la estructura','Un índice numérico que indica la posición en un arreglo','El primer elemento de la lista, llamado cabeza','Una función que recorre la lista'],
+ correct:0,
+ explain:'Un <span class="key2">nodo</span> guarda un dato y un puntero al siguiente nodo. Encadenando nodos se forma la lista enlazada; el último apunta a null. No usa posiciones contiguas en memoria como el arreglo.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Lista Enlazada',emoji:'🔗',
+ q:'¿Qué es una <b>lista enlazada</b> y en qué se diferencia de un arreglo?',
+ opts:['Una secuencia de nodos unidos por punteros; no es contigua en memoria y se recorre secuencialmente (acceso O(n))','Un bloque contiguo de memoria con acceso por índice en O(1)','Una estructura que solo permite operar en un extremo (LIFO)','Un árbol con dos hijos por nodo'],
+ correct:0,
+ explain:'La <span class="key2">lista enlazada</span> encadena nodos con punteros: facilita inserciones/eliminaciones (reconectar punteros) pero el acceso por posición es O(n). El arreglo es contiguo y accede por índice en O(1), pero insertar en el medio desplaza elementos.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Recursividad',emoji:'🌀',
+ q:'¿Qué es la <b>recursividad</b>?',
+ opts:['Una técnica en la que una función se llama a sí misma para resolver un problema dividiéndolo en versiones más pequeñas','Un bucle for que repite una cantidad fija de veces','Una estructura de datos LIFO','Un algoritmo de ordenamiento por intercambio de vecinos'],
+ correct:0,
+ explain:'La <span class="key2">recursividad</span> es cuando una función se invoca a sí misma sobre un subproblema más chico. Requiere un caso base que la detenga y un caso recursivo que se acerque a él.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Recursividad',emoji:'🌀',
+ q:'¿Qué es el <b>caso base</b> en una función recursiva?',
+ opts:['La condición que detiene la recursión devolviendo un resultado sin volver a llamarse a sí misma','La primera llamada que hace el usuario a la función','El caso donde la función se llama a sí misma','El valor más grande que procesa la recursión'],
+ correct:0,
+ explain:'El <span class="key2">caso base</span> es la condición de corte: cuando se cumple, la función devuelve un valor directo sin recursión. Sin él, las llamadas se apilarían infinitamente (stack overflow).'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Árbol Binario (ABB)',emoji:'🌳',
+ q:'¿Qué es un <b>Árbol Binario de Búsqueda (ABB)</b>?',
+ opts:['Un árbol donde cada nodo tiene hasta dos hijos y se cumple: menores a la izquierda y mayores a la derecha','Un árbol donde cada nodo puede tener cualquier cantidad de hijos sin orden','Una lista enlazada con dos punteros por nodo','Una estructura FIFO de dos extremos'],
+ correct:0,
+ explain:'En el <span class="key2">ABB</span> cada nodo tiene a lo sumo dos hijos, con los menores a la izquierda y los mayores a la derecha. Esa propiedad permite búsqueda O(log n) (si está balanceado) y recorrido inorden ordenado.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Grafos — BFS',emoji:'🗺️',
+ q:'¿Qué es un <b>grafo</b>?',
+ opts:['Un conjunto de nodos (vértices) conectados por aristas, que puede ser dirigido o no dirigido','Una estructura jerárquica con una única raíz y sin ciclos','Una lista ordenada de elementos contiguos','Una pila con prioridad'],
+ correct:0,
+ explain:'Un <span class="key2">grafo</span> es un conjunto de vértices unidos por aristas; modela relaciones (mapas, redes sociales, dependencias). A diferencia del árbol, puede tener ciclos y múltiples conexiones.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Grafos — BFS',emoji:'🗺️',
+ q:'¿Qué nos dice el recorrido <b>BFS</b> (búsqueda en anchura)?',
+ opts:['Que se exploran los nodos por niveles, visitando primero los más cercanos, usando una cola','Que se profundiza por una rama hasta el final antes de retroceder','Que se descarta la mitad de los nodos en cada paso','Que se ordenan los nodos de menor a mayor'],
+ correct:0,
+ explain:'<span class="key2">BFS</span> explora por niveles con una cola: primero los vecinos directos, luego los siguientes. Por eso encuentra el camino más corto en grafos sin pesos. DFS, en cambio, profundiza con pila/recursión.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Búsqueda Binaria',emoji:'🎯',
+ q:'¿Qué es la <b>búsqueda binaria</b> y qué requiere?',
+ opts:['Un algoritmo que busca en datos ORDENADOS descartando la mitad en cada paso; es O(log n) y necesita acceso directo (arreglo)','Un algoritmo que recorre los datos uno por uno desde el inicio','Una búsqueda que funciona en cualquier lista, ordenada o no','Un recorrido en profundidad de un grafo'],
+ correct:0,
+ explain:'La <span class="key2">búsqueda binaria</span> compara con el elemento del medio y descarta la mitad donde no puede estar el valor, logrando O(log n). Requiere datos ordenados y acceso directo al medio (arreglo, no lista enlazada).'},
+{eje:'IV',ejeName:'Abstracción y Complejidad',topic:'Complejidad',emoji:'📈',
+ q:'¿Qué nos dice la <b>notación Big O</b> (por ejemplo O(n))?',
+ opts:['Describe cómo crece el tiempo o la memoria de un algoritmo a medida que aumenta el tamaño de la entrada, en el peor caso','El tiempo exacto en segundos que tarda un algoritmo','La cantidad de líneas de código del algoritmo','El lenguaje en que está escrito el programa'],
+ correct:0,
+ explain:'La <span class="key2">notación Big O</span> expresa el orden de crecimiento del costo de un algoritmo según el tamaño n de la entrada (peor caso): O(1) constante, O(log n) logarítmica, O(n) lineal, O(n²) cuadrática. Sirve para comparar eficiencia sin depender del hardware.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Ordenamiento',emoji:'🫧',
+ q:'¿Qué nos dice que un algoritmo de ordenamiento sea <b>O(n²)</b> como la burbuja?',
+ opts:['Que en el peor caso su costo crece con el cuadrado de la cantidad de datos: poco eficiente para listas grandes','Que es el algoritmo de ordenamiento más rápido que existe','Que solo funciona con listas ya ordenadas','Que no compara elementos entre sí'],
+ correct:0,
+ explain:'Un ordenamiento <span class="key2">O(n²)</span> (burbuja, inserción, selección en peor caso) hace un número de operaciones proporcional a n²: aceptable para listas chicas, pero muy lento para grandes volúmenes comparado con algoritmos O(n log n).'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Arreglos',emoji:'🗂️',
+ ctx:'Tenés que guardar las 24 temperaturas horarias de un día y vas a acceder muchísimas veces a "la temperatura de la hora 14" de forma directa, sin recorrer las demás. La cantidad de datos es fija y conocida.',
+ q:'¿Qué estructura es la más adecuada?',
+ opts:['Un <b>arreglo (array)</b>: tamaño fijo y acceso directo por índice en O(1)','Una lista enlazada, porque el acceso por posición es más rápido','Una pila, porque solo te interesa el último valor','Una cola, porque los datos llegan en orden'],
+ correct:0,
+ explain:'El <span class="key2">arreglo</span> es ideal cuando la cantidad es fija/conocida y predomina el acceso directo por índice: posiciones contiguas en memoria → acceso O(1). La lista enlazada accedería en O(n).'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Archivos',emoji:'📁',
+ ctx:'Una app de inventario debe conservar los datos cargados aunque se cierre el programa o se apague la computadora, para volver a leerlos al día siguiente.',
+ q:'¿Qué mecanismo usás para esa persistencia?',
+ opts:['<b>Archivos</b>: permiten almacenar datos de forma permanente en disco y leerlos en otra ejecución','Variables en memoria, porque conservan los datos al apagar','Una pila, porque guarda el estado del programa','Un arreglo, porque su contenido no se borra'],
+ correct:0,
+ explain:'Las variables y estructuras en memoria (arreglos, pilas, listas) se pierden al cerrar el programa. Para <span class="key2">persistencia</span> se usan <span class="key2">archivos</span>: guardan datos en disco y permiten recuperarlos en futuras ejecuciones.'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Algoritmo',emoji:'📝',
+ q:'¿Qué es un <b>algoritmo</b>?',
+ opts:['Un conjunto ordenado y finito de pasos que resuelve un problema o realiza una tarea','El lenguaje de programación en el que se escribe un programa','Una estructura de datos para guardar información','El hardware donde se ejecuta un programa'],
+ correct:0,
+ explain:'Un <span class="key2">algoritmo</span> es una secuencia ordenada, finita y precisa de pasos que transforma una entrada en una salida, resolviendo un problema. Es independiente del lenguaje: luego se codifica en un programa.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Cola Circular',emoji:'🔄',
+ ctx:'Programás un buffer de tamaño fijo para los últimos 8 comandos de un dispositivo: cuando se llena, el espacio del más viejo se reutiliza para el nuevo, "dando la vuelta" al inicio del arreglo sin desperdiciar lugar.',
+ q:'¿Qué estructura es la adecuada?',
+ opts:['<b>Cola circular</b>: al llegar al final del arreglo, el índice vuelve al principio reutilizando posiciones libres','Una pila simple, porque reutiliza el tope','Una lista doblemente enlazada','Un árbol binario de búsqueda'],
+ correct:0,
+ explain:'La <span class="key2">cola circular</span> aprovecha un arreglo de tamaño fijo: cuando el índice llega al final, vuelve a 0 (módulo). Evita el desperdicio de espacio de una cola lineal y modela buffers, turnos rotativos y planificación round-robin.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Doble Cola',emoji:'↔️',
+ ctx:'Necesitás una estructura donde puedas agregar y quitar elementos por <b>ambos extremos</b> (frente y final), por ejemplo para una ventana deslizante o el historial de acciones de un juego.',
+ q:'¿Qué estructura describe eso?',
+ opts:['Una <b>doble cola (deque)</b>: permite insertar y eliminar tanto por el frente como por el final','Una cola simple: solo entra por un extremo y sale por el otro','Una pila: solo opera en el tope','Un árbol binario: opera en la raíz'],
+ correct:0,
+ explain:'La <span class="key2">doble cola</span> o deque (double-ended queue) permite operaciones de inserción y eliminación en ambos extremos, combinando flexibilidad de pila y cola. Es una de las extensiones de colas del programa.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Tipo Definido por Usuario',emoji:'🧩',
+ q:'¿Qué es un <b>tipo de dato definido por el usuario</b> (registro/struct)?',
+ opts:['Un tipo creado por el programador que agrupa varios campos de distintos tipos bajo un mismo nombre (ej: una Persona con nombre, edad y dni)','Un tipo primitivo que ya trae el lenguaje, como int o float','Una variable que cambia de tipo en ejecución','Un archivo de configuración del compilador'],
+ correct:0,
+ explain:'Un <span class="key2">tipo definido por el usuario</span> (registro, struct, record) agrupa varios campos relacionados, posiblemente de tipos distintos, en una sola unidad. Permite modelar entidades del problema (Persona, Producto) y es base de estructuras más complejas.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Recursividad',emoji:'🌀',
+ q:'¿Cuál es la diferencia entre recursividad <b>directa</b> e <b>indirecta</b>?',
+ opts:['Directa: una función se llama a sí misma. Indirecta: una función A llama a B, y B vuelve a llamar a A (ciclo de llamadas)','Directa usa bucles; indirecta usa condicionales','Directa no tiene caso base; indirecta sí','No hay diferencia, son sinónimos'],
+ correct:0,
+ explain:'En la <span class="key2">recursividad directa</span> la función se invoca a sí misma. En la <span class="key2">indirecta</span> el ciclo pasa por varias funciones (A llama a B y B llama a A). Ambas necesitan un caso base para terminar.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Recursividad',emoji:'🌀',
+ ctx:'Tenés que sumar los números del 1 al 1.000.000. Podés hacerlo con un bucle (iteración) o con una función recursiva que se llame un millón de veces.',
+ q:'¿Qué conviene y por qué, en cuanto a uso de memoria?',
+ opts:['La <b>iteración</b>: la recursión apilaría un millón de llamadas y puede causar stack overflow; el bucle usa memoria constante','La recursión, porque siempre es más eficiente que la iteración','Da exactamente lo mismo en memoria','La recursión, porque no usa la pila de ejecución'],
+ correct:0,
+ explain:'Toda llamada recursiva consume espacio en la <span class="key2">pila de ejecución</span>. Con un millón de niveles eso desborda la pila. La <span class="key2">iteración</span> usa memoria constante. Recursión e iteración son intercambiables, pero hay que evaluar el costo en memoria.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Hashing',emoji:'🔑',
+ ctx:'Tenés que verificar instantáneamente si un DNI ya está registrado entre millones de socios, con búsquedas constantes sin importar cuántos haya, y no necesitás recorrerlos en orden.',
+ q:'¿Qué técnica/estructura usás?',
+ opts:['Una <b>tabla hash</b>: aplica una función de hash a la clave para acceder casi en O(1) promedio','Búsqueda binaria sobre una lista enlazada','Ordenamiento burbuja antes de cada búsqueda','Recorrido inorden de un árbol'],
+ correct:0,
+ explain:'El <span class="key2">hashing</span> usa una función que convierte la clave (DNI) en una posición de una tabla, logrando acceso/búsqueda promedio <span class="key2">O(1)</span>. Es la técnica de "acceso directo" y "conversión de claves" del programa (Subeje V).'},
+{eje:'III',ejeName:'Eficiencia',topic:'Búsqueda Máx/Mín',emoji:'🔍',
+ ctx:'Tenés una lista desordenada de 5.000 puntajes y solo necesitás encontrar el puntaje más alto. No te interesa ordenar toda la lista.',
+ q:'¿Cuál es el enfoque más eficiente?',
+ opts:['<b>Búsqueda de máximo</b>: una sola pasada O(n) comparando cada elemento con el mayor encontrado hasta el momento','Ordenar toda la lista con burbuja O(n²) y tomar el último','Búsqueda binaria, aunque esté desordenada','Recorrer la lista log(n) veces'],
+ correct:0,
+ explain:'Para hallar el <span class="key2">máximo (o mínimo)</span> alcanza una pasada lineal <span class="key2">O(n)</span> guardando el mayor visto. Ordenar toda la lista solo para sacar un extremo es desperdiciar trabajo (O(n²) o O(n log n)).'},
+{eje:'III',ejeName:'Eficiencia',topic:'Ordenamiento',emoji:'🗃️',
+ q:'¿Qué distingue a los métodos de ordenamiento <b>logarítmicos</b> (como Mergesort/Quicksort) de los <b>directos</b> (burbuja, inserción, selección)?',
+ opts:['Los logarítmicos usan "dividir y vencer" y rinden O(n log n); los directos son más simples pero O(n²)','Los directos son siempre más rápidos para listas grandes','Los logarítmicos no comparan elementos','Los directos solo funcionan con números y los logarítmicos con texto'],
+ correct:0,
+ explain:'Los <span class="key2">métodos directos</span> (burbuja, inserción, selección) son simples pero O(n²). Los <span class="key2">métodos logarítmicos / por intercalación</span> (Mergesort, Quicksort) aplican "dividir y vencer" y logran O(n log n), mucho mejores para grandes volúmenes.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Optimización',emoji:'⚙️',
+ q:'¿Qué proponen las <b>Reglas de Jackson</b> para optimizar algoritmos?',
+ opts:['No optimizar antes de tiempo: primero hacer que funcione y recién optimizar lo que realmente lo necesita, midiendo','Optimizar cada línea de código apenas se escribe, sin medir','Usar siempre recursividad para todo','Eliminar todos los comentarios para ganar velocidad'],
+ correct:0,
+ explain:'Las <span class="key2">Reglas de Jackson</span> sobre optimización dicen, en esencia: "No lo hagas (todavía)" — primero lograr un programa correcto y claro, y optimizar después solo donde mediciones demuestren que hace falta. Optimizar a ciegas complica el código sin beneficio real.'},
+{eje:'IV',ejeName:'Abstracción y Complejidad',topic:'TAD',emoji:'📦',
+ q:'¿Qué es un <b>Tipo Abstracto de Datos (TAD)</b>?',
+ opts:['Un modelo que define un conjunto de datos junto con las operaciones que se pueden hacer sobre ellos, ocultando cómo están implementados','Un tipo primitivo del lenguaje como int o char','Un archivo donde se guardan datos en disco','Un algoritmo de ordenamiento'],
+ correct:0,
+ explain:'Un <span class="key2">TAD</span> define QUÉ operaciones ofrece una estructura (ej: Pila con push/pop) sin exponer CÓMO está implementada (con arreglo o lista). Separa la interfaz de la implementación: la base de la abstracción de datos.'},
+{eje:'IV',ejeName:'Abstracción y Complejidad',topic:'TAD',emoji:'📦',
+ q:'¿Cuál es la diferencia entre un <b>tipo de dato</b> y un <b>tipo abstracto de datos (TAD)</b>?',
+ opts:['El tipo de dato define valores y su representación; el TAD agrega un conjunto de operaciones y oculta la implementación interna (encapsulamiento)','Son exactamente lo mismo con distinto nombre','El TAD es más rápido de ejecutar','El tipo de dato solo existe en Python y el TAD solo en Pascal'],
+ correct:0,
+ explain:'Un <span class="key2">tipo de dato</span> describe valores posibles y su representación. Un <span class="key2">TAD</span> suma a eso un conjunto de operaciones bien definidas y oculta su implementación: usás la Pila por sus operaciones, sin saber si por dentro es arreglo o lista.'},
+{eje:'IV',ejeName:'Abstracción y Complejidad',topic:'Encapsulamiento',emoji:'🔒',
+ q:'¿Qué es el <b>encapsulamiento</b> en el contexto de un TAD?',
+ opts:['Ocultar los detalles internos de implementación y exponer solo las operaciones permitidas, protegiendo los datos de accesos indebidos','Comprimir los datos para que ocupen menos espacio','Ejecutar el programa en una máquina virtual','Guardar los datos en un archivo cifrado'],
+ correct:0,
+ explain:'El <span class="key2">encapsulamiento</span> esconde la representación interna del TAD y solo deja interactuar mediante sus operaciones públicas. Así, si cambiás la implementación interna, el resto del programa no se ve afectado: una gran ventaja de los TAD.'},
+{eje:'IV',ejeName:'Abstracción y Complejidad',topic:'Complejidad',emoji:'📈',
+ q:'En el análisis de algoritmos, ¿qué significan el <b>mejor</b>, <b>peor</b> y <b>caso medio</b>?',
+ opts:['Son los escenarios según cómo vengan los datos de entrada: el más favorable, el más desfavorable y el promedio esperado','Son tres lenguajes de programación distintos','Son los tres tipos de variables de un programa','Son niveles de dificultad del examen'],
+ correct:0,
+ explain:'El análisis considera el <span class="key2">mejor caso</span> (entrada más favorable), el <span class="key2">peor caso</span> (la más desfavorable, lo más usado para garantizar cotas) y el <span class="key2">caso medio</span> (promedio esperado). Big O suele expresar el peor caso.'},
+{eje:'IV',ejeName:'Abstracción y Complejidad',topic:'Complejidad',emoji:'📈',
+ q:'¿Qué es una <b>operación elemental</b> en el análisis de complejidad?',
+ opts:['Una operación básica de costo constante (comparación, asignación, suma) que se cuenta para medir el trabajo del algoritmo','La operación más lenta de todo el programa','La primera instrucción que ejecuta el algoritmo','Una operación que solo hacen los algoritmos recursivos'],
+ correct:0,
+ explain:'Una <span class="key2">operación elemental</span> es una acción de costo constante (comparar, asignar, operar) que se toma como unidad para contar cuánto trabajo hace un algoritmo. El Principio de Invarianza garantiza que el orden de complejidad no depende de la máquina.'},
+{eje:'IV',ejeName:'Abstracción y Complejidad',topic:'Complejidad',emoji:'📈',
+ q:'¿Qué describe el <b>comportamiento asintótico</b> de la complejidad?',
+ opts:['Cómo crece el costo del algoritmo cuando el tamaño de la entrada tiende a valores muy grandes, ignorando constantes','El tiempo exacto en segundos para entradas chicas','La cantidad de memoria RAM de la computadora','El nombre del autor del algoritmo'],
+ correct:0,
+ explain:'La <span class="key2">notación asintótica</span> (O, Ω, Θ) describe el crecimiento del costo cuando n se hace muy grande, despreciando constantes y términos menores. Permite comparar algoritmos de forma independiente del hardware.'},
+{eje:'IV',ejeName:'Abstracción y Complejidad',topic:'Complejidad',emoji:'📈',
+ q:'¿Para qué sirven las <b>ecuaciones de recurrencia</b>?',
+ opts:['Para expresar y calcular la complejidad de algoritmos recursivos, definiendo el costo en función del costo de los subproblemas','Para ordenar listas más rápido','Para convertir un programa de Python a Pascal','Para guardar datos en memoria'],
+ correct:0,
+ explain:'Una <span class="key2">ecuación de recurrencia</span> define el costo T(n) de un algoritmo recursivo en términos de llamadas más chicas (ej: T(n)=2T(n/2)+n para Mergesort). Resolverla da el orden de complejidad (ese ejemplo → O(n log n)).'},
+{eje:'V',ejeName:'Metodología',topic:'Paradigmas',emoji:'🧠',
+ q:'¿Qué es un <b>paradigma de programación</b>?',
+ opts:['Un estilo o enfoque para estructurar y resolver problemas con código (estructurado, orientado a objetos, funcional, lógico)','Un lenguaje de programación específico','Un tipo de computadora','Una estructura de datos avanzada'],
+ correct:0,
+ explain:'Un <span class="key2">paradigma de programación</span> es una manera de concebir y organizar la solución: el estructurado (secuencia/decisión/iteración), el orientado a objetos, el funcional, el lógico. Un mismo lenguaje puede soportar varios paradigmas.'},
+{eje:'V',ejeName:'Metodología',topic:'Pruebas / Testing',emoji:'🧪',
+ ctx:'Terminaste una función que calcula descuentos. Antes de ponerla en producción, tu líder te pide demostrar que funciona bien con distintos valores: positivos, cero, negativos y casos límite.',
+ q:'¿Qué práctica de desarrollo estás aplicando?',
+ opts:['<b>Pruebas / testing</b>: verificar el comportamiento del programa con distintos casos para detectar errores antes de producción','Optimización por afinación del código','Encapsulamiento de los datos','Control de versiones del proyecto'],
+ correct:0,
+ explain:'Las <span class="key2">pruebas (testing)</span> verifican que el software se comporte como se espera ante distintas entradas, incluyendo casos límite. Son parte de la programación confiable: detectar defectos temprano reduce costos y fallas en producción.'},
+{eje:'V',ejeName:'Metodología',topic:'Programación Confiable',emoji:'🛡️',
+ q:'¿Qué es la <b>tolerancia a defectos</b> en programación confiable?',
+ opts:['La capacidad de un programa de seguir funcionando de forma razonable aun cuando ocurren errores o entradas inesperadas','Escribir código sin ningún error, garantizado','Eliminar todas las pruebas para acelerar el desarrollo','Usar siempre el lenguaje más nuevo'],
+ correct:0,
+ explain:'La <span class="key2">tolerancia a defectos</span> es diseñar el software para que ante errores o datos inesperados no colapse, sino que los maneje (validaciones, manejo de excepciones, valores por defecto). Es clave de la programación confiable.'},
+{eje:'V',ejeName:'Metodología',topic:'Control de Versiones',emoji:'🌿',
+ ctx:'Trabajás en equipo y necesitás llevar un historial de los cambios del código, poder volver a una versión anterior si algo se rompe, y que varios programadores trabajen en paralelo sin pisarse.',
+ q:'¿Qué herramienta usás?',
+ opts:['Un <b>sistema de control de versiones</b> (como Git): guarda el historial, permite revertir y fusionar trabajo de varios','Un archivo .zip con copias manuales por fecha','El botón "Deshacer" del editor','Una hoja de cálculo con los cambios'],
+ correct:0,
+ explain:'Un <span class="key2">control de versiones</span> (Git) registra cada cambio, permite volver a versiones previas, crear ramas y fusionar el trabajo de varias personas sin conflictos. Es una buena práctica esencial del desarrollo moderno (Subeje X).'},
+{eje:'V',ejeName:'Metodología',topic:'Mantenimiento',emoji:'🔧',
+ q:'¿Qué es el <b>mantenimiento del software</b>?',
+ opts:['Las modificaciones que se hacen al programa después de entregado: corregir errores, adaptarlo a cambios y mejorarlo','La etapa de escribir el código por primera vez','La compra de hardware nuevo para el servidor','La instalación inicial del programa'],
+ correct:0,
+ explain:'El <span class="key2">mantenimiento</span> ocurre tras la entrega: corregir errores (correctivo), adaptarse a nuevos requisitos o entornos (adaptativo) y mejorar el sistema (perfectivo). Suele ser la fase más larga y costosa del ciclo de vida del software.'},
+{eje:'V',ejeName:'Metodología',topic:'IDE / Depuración',emoji:'🐞',
+ ctx:'Tu programa da un resultado incorrecto y no sabés en qué línea. Querés ejecutarlo paso a paso, ver el valor de las variables en cada momento y poner puntos de pausa.',
+ q:'¿Qué herramienta del IDE usás?',
+ opts:['El <b>depurador (debugger)</b>: permite ejecutar paso a paso, inspeccionar variables y poner breakpoints','El compilador, que ordena el código','El control de versiones, que corrige el error solo','Un algoritmo de ordenamiento'],
+ correct:0,
+ explain:'El <span class="key2">depurador (debugger)</span> de un IDE permite pausar la ejecución con breakpoints, avanzar paso a paso e inspeccionar el valor de las variables, para encontrar dónde y por qué falla el programa. Es clave para evaluar y depurar.'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Paradigmas',emoji:'🧭',
+ q:'¿Cuál es la diferencia entre el paradigma <b>imperativo</b> y el <b>declarativo</b>?',
+ opts:['El imperativo indica el CÓMO (los pasos y cambios de estado); el declarativo indica el QUÉ se quiere y el sistema resuelve el cómo','El imperativo no usa variables y el declarativo sí','Son sinónimos: ambos describen pasos','El declarativo solo sirve para videojuegos'],
+ correct:0,
+ explain:'En el <span class="key2">imperativo</span> (estructurado, OOP) el programador detalla el cómo: la secuencia de pasos y los cambios de estado. En el <span class="key2">declarativo</span> (funcional, lógico) se describe el qué se quiere obtener y el motor resuelve el cómo. SQL y Prolog son declarativos; C y Java, imperativos.'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Paradigmas',emoji:'🧭',
+ q:'¿Qué caracteriza al paradigma <b>orientado a objetos (OOP)</b>?',
+ opts:['Modela el problema con objetos y clases que combinan estado (atributos) y comportamiento (métodos), usando herencia y polimorfismo','Describe hechos y reglas para que un motor infiera la respuesta','Usa solo funciones puras sin estado','Ejecuta instrucciones en secuencia sin agrupar datos'],
+ correct:0,
+ explain:'La <span class="key2">OOP</span> modela entidades del mundo real como objetos (instancias de clases) que combinan datos y comportamiento. Sus pilares son abstracción, encapsulamiento, herencia y polimorfismo. Ejemplos: Java, C++.'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Paradigmas',emoji:'🧭',
+ q:'¿Qué caracteriza al paradigma <b>funcional</b>?',
+ opts:['Se basa en funciones puras (mismo input → mismo output, sin efectos secundarios), inmutabilidad y composición de funciones','Se basa en clases, objetos y herencia','Define hechos y reglas para inferir consultas','Cambia el estado de variables paso a paso'],
+ correct:0,
+ explain:'El paradigma <span class="key2">funcional</span> usa funciones puras (sin efectos secundarios), datos inmutables y funciones de orden superior (map, filter, reduce). Es declarativo y muy testeable. Ejemplos: Haskell, Lisp.'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Paradigmas',emoji:'🧭',
+ q:'¿Qué caracteriza al paradigma <b>lógico</b>?',
+ opts:['Se declaran hechos y reglas, y un motor de inferencia resuelve las consultas (ej: Prolog, por backtracking)','Se modela todo con objetos y clases','Se ejecutan instrucciones en secuencia cambiando variables','Se usan funciones puras sin estado'],
+ correct:0,
+ explain:'El paradigma <span class="key2">lógico</span> (Prolog) declara hechos y reglas; el motor de inferencia responde consultas buscando soluciones por backtracking. Se define QUÉ es verdadero y el sistema deduce el cómo. Útil en IA y sistemas expertos.'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Pilares de la OOP',emoji:'🏛️',
+ q:'¿Qué es la <b>herencia</b> en la OOP?',
+ opts:['Una clase hija reutiliza y extiende los atributos y métodos de una clase padre','Ocultar el estado interno de un objeto','Que un mismo mensaje produzca distinto comportamiento según el objeto','Modelar lo esencial ignorando el detalle'],
+ correct:0,
+ explain:'La <span class="key2">herencia</span> permite que una clase hija reutilice y extienda a una clase padre, evitando repetir código. Es uno de los 4 pilares de la OOP, junto con abstracción, encapsulamiento y polimorfismo.'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Pilares de la OOP',emoji:'🏛️',
+ q:'¿Qué es el <b>polimorfismo</b> en la OOP?',
+ opts:['Que un mismo mensaje (método) produzca distinto comportamiento según el tipo de objeto que lo recibe','Que una clase herede de otra','Ocultar los atributos privados de una clase','Dividir el programa en archivos'],
+ correct:0,
+ explain:'El <span class="key2">polimorfismo</span> permite que un mismo método se comporte distinto según el objeto (ej: el método dibujar() pinta un círculo o un cuadrado según la figura). Da flexibilidad y extensibilidad al código.'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Pilares de la OOP',emoji:'🏛️',
+ q:'¿Qué es la <b>abstracción</b> en la OOP?',
+ opts:['Modelar lo esencial de una entidad, exponiendo lo relevante e ignorando los detalles internos','Copiar el código de una clase en otra','Ejecutar varias instrucciones en paralelo','Guardar los datos en disco'],
+ correct:0,
+ explain:'La <span class="key2">abstracción</span> consiste en representar una entidad por sus características esenciales, ocultando la complejidad interna. Por ejemplo, usás un Auto por sus métodos (acelerar, frenar) sin saber cómo funciona el motor por dentro.'},
+{eje:'I',ejeName:'Conceptos Básicos',topic:'Pilares de la OOP',emoji:'🏛️',
+ ctx:'Una función recibe una lista de precios y devuelve una lista nueva con un 10% más, sin modificar la lista original ni ninguna variable externa. Con el mismo input siempre da el mismo resultado.',
+ q:'¿Cómo se llama ese tipo de función?',
+ opts:['<b>Función pura</b>: sin efectos secundarios y con salida determinada solo por su entrada','Función recursiva, porque transforma datos','Procedimiento, porque modifica el estado global','Función polimórfica'],
+ correct:0,
+ explain:'Una <span class="key2">función pura</span> siempre devuelve lo mismo para el mismo input y no modifica el estado externo (sin efectos secundarios). Es el corazón del paradigma funcional. No confundir con recursiva (que es un mecanismo de control de flujo).'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Recorridos de Árbol',emoji:'🌲',
+ q:'En el recorrido <b>preorden</b> de un árbol, ¿en qué orden se visitan los nodos?',
+ opts:['Raíz → subárbol izquierdo → subárbol derecho (primero la raíz)','Izquierdo → raíz → derecho','Izquierdo → derecho → raíz','Por niveles, de arriba hacia abajo'],
+ correct:0,
+ explain:'El recorrido <span class="key2">preorden</span> visita primero la raíz, luego el subárbol izquierdo y por último el derecho (R-I-D). Sirve, por ejemplo, para copiar/clonar un árbol o exportar su estructura.'},
+{eje:'II',ejeName:'Estructuras de Datos',topic:'Recorridos de Árbol',emoji:'🌲',
+ q:'En el recorrido <b>postorden</b> de un árbol, ¿en qué orden se visitan los nodos?',
+ opts:['Subárbol izquierdo → subárbol derecho → raíz (la raíz al final)','Raíz → izquierdo → derecho','Izquierdo → raíz → derecho','Por niveles con una cola (BFS)'],
+ correct:0,
+ explain:'El recorrido <span class="key2">postorden</span> visita primero los subárboles izquierdo y derecho, y la raíz al final (I-D-R). Se usa para liberar/eliminar un árbol (borrás los hijos antes que el padre) o evaluar expresiones.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Ordenamiento',emoji:'🔢',
+ q:'¿Cómo funciona el <b>ordenamiento por selección</b>?',
+ opts:['En cada pasada busca el mínimo del resto de la lista y lo coloca en su posición final','Compara solo elementos vecinos y los intercambia','Divide la lista a la mitad recursivamente y la fusiona ordenada','Inserta cada elemento en la parte ya ordenada'],
+ correct:0,
+ explain:'El <span class="key2">ordenamiento por selección</span> busca en cada pasada el elemento mínimo del tramo no ordenado y lo intercambia a su posición correcta. Es un método directo, O(n²), simple pero poco eficiente para listas grandes.'},
+{eje:'III',ejeName:'Eficiencia',topic:'Ordenamiento',emoji:'🔢',
+ q:'¿Cómo funciona el <b>Mergesort</b> (ordenamiento por mezcla)?',
+ opts:['Divide la lista a la mitad recursivamente, ordena cada mitad y luego las intercala (merge); es O(n log n)','Compara e intercambia elementos vecinos en pasadas','Busca el mínimo en cada pasada','Recorre la lista una sola vez'],
+ correct:0,
+ explain:'El <span class="key2">Mergesort</span> aplica "dividir y vencer": parte la lista a la mitad recursivamente hasta tener sublistas de 1 elemento y luego las <b>intercala</b> ordenadas. Es estable y O(n log n), mucho mejor que los métodos directos O(n²).'},
+{eje:'III',ejeName:'Eficiencia',topic:'Ordenamiento',emoji:'🔢',
+ q:'¿Cómo funciona el <b>Quicksort</b>?',
+ opts:['Elige un pivote, divide la lista en menores y mayores que el pivote, y ordena cada parte recursivamente; promedio O(n log n)','Compara solo vecinos e intercambia','Recorre la lista buscando el máximo','Fusiona dos listas ya ordenadas sin pivote'],
+ correct:0,
+ explain:'El <span class="key2">Quicksort</span> elige un <b>pivote</b> y particiona la lista en elementos menores y mayores que él, ordenando cada parte recursivamente. En promedio es O(n log n) y muy rápido en la práctica; en el peor caso (pivote malo) cae a O(n²).'},
+{eje:'III',ejeName:'Eficiencia',topic:'Recursividad',emoji:'🌀',
+ q:'¿Qué pasa en la <b>pila de ejecución</b> cuando una función recursiva se llama a sí misma?',
+ opts:['Por cada llamada se apila un marco (frame) con sus variables y el punto de retorno; al llegar al caso base se van desapilando','No se usa la pila; la recursión reutiliza el mismo marco','Se borra la memoria de la llamada anterior','Se ejecutan todas las llamadas en paralelo'],
+ correct:0,
+ explain:'Cada llamada recursiva apila un <span class="key2">marco de activación</span> con sus variables locales y la dirección de retorno. Al alcanzar el caso base, los marcos se van desapilando y resolviendo en orden inverso. Si hay demasiadas llamadas, la pila se desborda (stack overflow).'},
+{eje:'V',ejeName:'Metodología',topic:'Metodologías',emoji:'🛠️',
+ q:'¿Cuáles son las etapas generales del <b>ciclo de vida del software</b>?',
+ opts:['Análisis de requerimientos → diseño → implementación → pruebas → despliegue → mantenimiento','Compilar → ejecutar → apagar','Solo programar y entregar','Diseño → mantenimiento → requerimientos'],
+ correct:0,
+ explain:'El <span class="key2">ciclo de vida del software</span> abarca: requerimientos, diseño, implementación (codificación), pruebas, despliegue y mantenimiento. En cascada se hace una vez de forma secuencial; en ágil se repite en iteraciones cortas.'},
+{eje:'V',ejeName:'Metodología',topic:'Metodologías',emoji:'🛠️',
+ ctx:'Una empresa desarrolla software para un cliente con requerimientos muy estables y un contrato de precio fijo. Quieren fases bien documentadas, una después de la otra, sin volver atrás.',
+ q:'¿Qué metodología encaja mejor?',
+ opts:['<b>Modelo en Cascada</b>: fases secuenciales (requerimientos → diseño → implementación → verificación → mantenimiento), predecible y documentado','Scrum, por los sprints iterativos','Kanban, por el flujo continuo','XP, por la programación en pares'],
+ correct:0,
+ explain:'El <span class="key2">modelo en cascada</span> es secuencial: cada fase termina antes de empezar la siguiente. Es predecible y muy documentado, ideal para requerimientos estables y contratos fijos, pero rígido ante cambios (los errores se detectan tarde).'},
+{eje:'V',ejeName:'Metodología',topic:'Metodologías',emoji:'🛠️',
+ q:'¿Qué prioriza el <b>Manifiesto Ágil</b> (2001)?',
+ opts:['Individuos e interacciones, software funcionando, colaboración con el cliente y respuesta al cambio, por encima de procesos, documentación, contratos y planes rígidos','Documentación exhaustiva por encima del software funcionando','Seguir el plan por encima de adaptarse al cambio','La negociación contractual por encima del cliente'],
+ correct:0,
+ explain:'Los 4 valores del <span class="key2">Manifiesto Ágil</span> priorizan: individuos e interacciones > procesos; software funcionando > documentación; colaboración con el cliente > contrato; respuesta al cambio > seguir un plan. Es iterativo e incremental.'},
+{eje:'V',ejeName:'Metodología',topic:'Metodologías',emoji:'🛠️',
+ q:'En <b>Scrum</b>, ¿cuáles son sus roles, artefactos y ceremonias principales?',
+ opts:['Roles: Product Owner, Scrum Master, Development Team. Artefactos: Product Backlog, Sprint Backlog, Incremento. Ceremonias: Planning, Daily, Review, Retrospectiva','Solo un jefe de proyecto que asigna tareas','Roles: analista, programador, tester; sin reuniones','Un único documento de requerimientos firmado al inicio'],
+ correct:0,
+ explain:'<span class="key2">Scrum</span> trabaja en sprints (1-4 semanas). Roles: Product Owner (prioriza), Scrum Master (facilita), Development Team. Artefactos: Product Backlog, Sprint Backlog, Incremento. Ceremonias: Sprint Planning, Daily Scrum, Sprint Review y Retrospectiva.'},
+{eje:'V',ejeName:'Metodología',topic:'Metodologías',emoji:'🛠️',
+ q:'¿Qué distingue a <b>Kanban</b> como metodología?',
+ opts:['Visualiza el flujo de trabajo en un tablero (Por hacer / En progreso / Hecho) y limita el trabajo en curso (WIP); no usa iteraciones fijas','Trabaja en sprints de 2 semanas con roles fijos','Es lo mismo que el modelo en cascada','Obliga a programar de a pares'],
+ correct:0,
+ explain:'<span class="key2">Kanban</span> visualiza el flujo en un tablero y limita el <b>trabajo en curso (WIP)</b> para evitar sobrecarga. No prescribe iteraciones fijas ni roles, por eso es ideal para soporte y mantenimiento (flujo continuo).'},
+{eje:'V',ejeName:'Metodología',topic:'Metodologías',emoji:'🛠️',
+ q:'¿Qué caracteriza a <b>Extreme Programming (XP)</b>?',
+ opts:['Lleva las buenas prácticas al extremo: TDD (pruebas primero), programación en pares, integración continua y refactoring permanente','Solo documentación y fases secuenciales','Un tablero con límite de WIP y sin roles','Entregar todo el producto recién al final'],
+ correct:0,
+ explain:'<span class="key2">XP</span> intensifica las prácticas de ingeniería: <b>TDD</b> (desarrollo guiado por pruebas), <b>programación en pares</b>, integración continua, refactoring constante y entregas frecuentes. Ideal para equipos pequeños que buscan alta calidad.'},
+{eje:'V',ejeName:'Metodología',topic:'Diseño y Buenas Prácticas',emoji:'🎨',
+ q:'¿Cuál es la diferencia entre diseño <b>Top-Down</b> y <b>Bottom-Up</b>?',
+ opts:['Top-Down parte del problema general y lo descompone en subproblemas; Bottom-Up construye primero los módulos pequeños y luego los integra','Top-Down programa sin planificar; Bottom-Up documenta todo','Son lo mismo','Top-Down solo aplica a bases de datos'],
+ correct:0,
+ explain:'<span class="key2">Top-Down</span> descompone el problema general en subproblemas (planificar antes de codear). <span class="key2">Bottom-Up</span> construye primero los módulos chicos y los integra (favorece la reutilización). Son dos estrategias de diseño complementarias.'},
+{eje:'V',ejeName:'Metodología',topic:'Diseño y Buenas Prácticas',emoji:'🎨',
+ q:'En diseño modular, ¿qué se busca con la <b>cohesión</b> y el <b>acoplamiento</b>?',
+ opts:['Alta cohesión (cada módulo hace una sola cosa bien) y bajo acoplamiento (los módulos dependen poco entre sí)','Baja cohesión y alto acoplamiento','Que todos los módulos compartan las mismas variables globales','Que haya un único módulo gigante'],
+ correct:0,
+ explain:'Un buen diseño busca <span class="key2">alta cohesión</span> (cada módulo tiene una responsabilidad clara) y <span class="key2">bajo acoplamiento</span> (poca dependencia entre módulos). Así, cambiar un módulo no rompe a los demás y el código es más mantenible.'},
+{eje:'V',ejeName:'Metodología',topic:'Diseño y Buenas Prácticas',emoji:'🎨',
+ ctx:'Una función llamada <code>validar_y_guardar_pedido()</code> primero valida los datos del pedido y después los graba en la base de datos.',
+ q:'¿Qué principio de diseño está violando?',
+ opts:['<b>SRP (Separación de Responsabilidades)</b>: tiene dos razones para cambiar; conviene separarla en validar_pedido() y guardar_pedido()','DRY, porque repite código','KISS, porque es muy simple','Ninguno, está bien diseñada'],
+ correct:0,
+ explain:'El <span class="key2">SRP</span> dice que cada función/módulo debe tener una única razón para cambiar. La "y" en el nombre es la pista: hace dos cosas (validar y guardar). Solución: separarla en dos funciones independientes.'},
+{eje:'V',ejeName:'Metodología',topic:'Diseño y Buenas Prácticas',emoji:'🎨',
+ ctx:'El mismo cálculo de descuento está copiado en 3 módulos distintos. Cuando cambia la regla del descuento, hay que tocar los 3 archivos.',
+ q:'¿Qué principio se está violando?',
+ opts:['<b>DRY (Don’t Repeat Yourself)</b>: el conocimiento debería estar en un solo lugar; extraer el cálculo a una función única','SRP, porque la función hace dos cosas','KISS, porque es demasiado complejo','Encapsulamiento'],
+ correct:0,
+ explain:'El principio <span class="key2">DRY</span> dice que cada conocimiento debe tener una sola representación. Si la regla está en 3 lugares, un cambio obliga a tocar 3 archivos (y olvidarse de uno causa bugs). Solución: una sola función calcular_descuento() llamada desde los 3 módulos.'},
+{eje:'V',ejeName:'Metodología',topic:'Diseño y Buenas Prácticas',emoji:'🎨',
+ q:'¿Qué propone el principio <b>KISS (Keep It Simple)</b>?',
+ opts:['Preferir la solución más simple que funcione antes que la más "inteligente" o complicada, porque el código se lee más veces de las que se escribe','Repetir el código para que sea más rápido','Escribir todo en una sola línea','Evitar las pruebas para simplificar'],
+ correct:0,
+ explain:'<span class="key2">KISS</span> (Keep It Simple, Stupid) recomienda la solución más simple y clara posible. El código se lee muchas más veces de las que se escribe, así que la simplicidad y la legibilidad valen más que la "astucia" innecesaria.'},
+{eje:'V',ejeName:'Metodología',topic:'Pruebas / Testing',emoji:'🧪',
+ q:'¿Qué verifica una <b>prueba unitaria</b>?',
+ opts:['Una función o módulo de forma aislada. Son rápidas, baratas y numerosas','Que dos o más módulos funcionen juntos','El sistema completo desde el punto de vista del usuario','Que el cliente acepte el producto'],
+ correct:0,
+ explain:'La <span class="key2">prueba unitaria</span> verifica una unidad aislada (una función o método) con entradas conocidas. Son el nivel más bajo y económico, se escriben muchas y se ejecutan rápido (suelen usar assert).'},
+{eje:'V',ejeName:'Metodología',topic:'Pruebas / Testing',emoji:'🧪',
+ ctx:'Querés comprobar que las funciones buscar_producto() y calcular_total() funcionen correctamente CUANDO trabajan juntas, no por separado.',
+ q:'¿Qué tipo de prueba necesitás?',
+ opts:['<b>Prueba de integración</b>: verifica que dos o más módulos interactúen correctamente','Prueba unitaria, porque prueba funciones','Prueba de aceptación, porque la valida el cliente','Prueba de sistema, porque prueba todo el sistema'],
+ correct:0,
+ explain:'La <span class="key2">prueba de integración</span> verifica que varios módulos funcionen bien juntos (sus interfaces y datos compartidos). No es unitaria (eso es una función aislada) ni de sistema (eso es el producto completo).'},
+{eje:'V',ejeName:'Metodología',topic:'Pruebas / Testing',emoji:'🧪',
+ q:'¿Qué verifica una <b>prueba de sistema</b>?',
+ opts:['El sistema completo desde el punto de vista del usuario; son más lentas y menos numerosas','Una sola función aislada','Solo la interacción entre dos módulos','El código fuente línea por línea'],
+ correct:0,
+ explain:'La <span class="key2">prueba de sistema</span> evalúa el producto completo e integrado, simulando el uso real del usuario (flujos de punta a punta). Tiene mayor alcance que las unitarias y de integración, por eso son más lentas y se hacen menos.'},
+{eje:'V',ejeName:'Metodología',topic:'Pruebas / Testing',emoji:'🧪',
+ q:'¿Qué es una <b>prueba de aceptación</b>?',
+ opts:['El cliente valida que el software cumple los requerimientos acordados; es el último nivel antes del despliegue','Una prueba que hace el programador sobre una función','Una prueba de velocidad del hardware','La compilación del código'],
+ correct:0,
+ explain:'La <span class="key2">prueba de aceptación</span> la realiza (o valida) el cliente/usuario para confirmar que el sistema cumple los requerimientos pactados. Es el último filtro antes de poner el software en producción.'},
+{eje:'V',ejeName:'Metodología',topic:'Programación Confiable',emoji:'🛡️',
+ ctx:'Tu programa pide una edad y el usuario escribe "abc" o un número negativo. Querés que el programa no se rompa y rechace esos valores antes de procesarlos.',
+ q:'¿Qué técnica de programación confiable aplicás?',
+ opts:['<b>Validación de entradas</b>: comprobar que los datos sean correctos antes de usarlos','Logging, para guardar un registro','Herencia, para reutilizar código','Recursividad, para repetir la lectura'],
+ correct:0,
+ explain:'La <span class="key2">validación de entradas</span> verifica que los datos recibidos cumplan las condiciones esperadas (tipo, rango, formato) antes de procesarlos. Es la primera línea de defensa de la programación confiable: nunca confiar ciegamente en la entrada del usuario.'},
+{eje:'V',ejeName:'Metodología',topic:'Programación Confiable',emoji:'🛡️',
+ q:'¿Para qué sirve el <b>manejo de excepciones</b> (try/except)?',
+ opts:['Capturar y controlar errores en tiempo de ejecución para que el programa no se caiga y pueda responder de forma adecuada','Acelerar la ejecución del programa','Ocultar el código fuente','Ordenar listas más rápido'],
+ correct:0,
+ explain:'El <span class="key2">manejo de excepciones</span> (try/except, try/catch) permite atrapar errores en ejecución (división por cero, archivo inexistente) y reaccionar de forma controlada, en lugar de que el programa se cierre abruptamente. Es parte de la tolerancia a defectos.'},
+{eje:'V',ejeName:'Metodología',topic:'Programación Confiable',emoji:'🛡️',
+ q:'¿Qué es el <b>logging</b> y para qué sirve?',
+ opts:['Registrar eventos, errores y estados del programa en un archivo o consola para diagnosticar problemas después','Iniciar sesión con usuario y contraseña','Eliminar el historial de cambios','Compilar el programa'],
+ correct:0,
+ explain:'El <span class="key2">logging</span> registra qué hizo el programa (eventos, errores, advertencias) en logs. Permite diagnosticar fallas en producción sin detener el sistema, entendiendo qué pasó y cuándo. Es clave para software confiable y mantenible.'},
+{eje:'V',ejeName:'Metodología',topic:'Control de Versiones',emoji:'🌿',
+ q:'En un sistema de control de versiones (Git), ¿qué es una <b>rama (branch)</b>?',
+ opts:['Una línea de desarrollo independiente que permite trabajar en una función o arreglo sin afectar la versión principal, y luego fusionarla (merge)','Una copia de seguridad en otro disco','Un error en el historial','El nombre del repositorio'],
+ correct:0,
+ explain:'Una <span class="key2">rama</span> en Git es una línea de trabajo paralela: podés desarrollar una nueva función o un arreglo aislado del código principal y, cuando está listo, integrarlo con un <b>merge</b>. Permite que varias personas trabajen en paralelo sin pisarse.'},
+{eje:'V',ejeName:'Metodología',topic:'Mantenimiento',emoji:'🔧',
+ ctx:'El sistema duplica registros cuando el usuario confirma con doble clic. Es un defecto reportado y hay que corregir la causa raíz.',
+ q:'¿Qué tipo de mantenimiento es?',
+ opts:['<b>Correctivo</b>: se inicia por un fallo/defecto reportado y arregla el error','Adaptativo, por un cambio del entorno','Perfectivo, por una mejora solicitada','Preventivo, por refactoring anticipado'],
+ correct:0,
+ explain:'El mantenimiento <span class="key2">correctivo</span> es el único que se inicia por un <b>bug</b> reportado: corrige defectos del sistema. Es reactivo y representa ~20% del mantenimiento (ISO/IEC 14764).'},
+{eje:'V',ejeName:'Metodología',topic:'Mantenimiento',emoji:'🔧',
+ ctx:'AFIP cambia el esquema XML de los comprobantes electrónicos. El sistema funcionaba perfecto, pero ahora hay que adaptar el módulo de facturación al nuevo formato externo.',
+ q:'¿Qué tipo de mantenimiento es?',
+ opts:['<b>Adaptativo</b>: responde a un cambio en el entorno externo (no hay bug)','Correctivo, porque algo falló','Perfectivo, porque agrega una función pedida','Preventivo, porque evita un problema futuro'],
+ correct:0,
+ explain:'El mantenimiento <span class="key2">adaptativo</span> responde a cambios del entorno externo (leyes, sistemas operativos, formatos de terceros). El software funcionaba bien; el cambio viene de afuera. Es ~19% del mantenimiento.'},
+{eje:'V',ejeName:'Metodología',topic:'Mantenimiento',emoji:'🔧',
+ ctx:'Los usuarios piden poder exportar el reporte de ventas a Excel. Se agrega esa nueva función al módulo de reportes.',
+ q:'¿Qué tipo de mantenimiento es?',
+ opts:['<b>Perfectivo</b>: agrega o mejora funciones a pedido de los usuarios (es el más frecuente, ~50%)','Correctivo, porque corrige un error','Adaptativo, por un cambio del entorno','Preventivo, por refactoring'],
+ correct:0,
+ explain:'El mantenimiento <span class="key2">perfectivo</span> agrega o mejora funcionalidades a pedido de los usuarios. Es proactivo y el <b>más frecuente</b> (~50% del mantenimiento). No corrige bugs ni responde a cambios externos.'},
+{eje:'V',ejeName:'Metodología',topic:'Mantenimiento',emoji:'🔧',
+ ctx:'Un módulo de 500 líneas sin tests se refactoriza y se le agregan pruebas ANTES de que crezca más y se vuelva difícil de mantener, aunque hoy funciona bien.',
+ q:'¿Qué tipo de mantenimiento es?',
+ opts:['<b>Preventivo</b>: refactoring estratégico para evitar problemas futuros, por decisión interna del equipo','Correctivo, porque arregla un bug actual','Adaptativo, por un cambio externo','Perfectivo, porque agrega una función'],
+ correct:0,
+ explain:'El mantenimiento <span class="key2">preventivo</span> es refactoring anticipado: se mejora la mantenibilidad antes de que aparezca el problema, por decisión del equipo. Es proactivo y el menos frecuente (~11%).'},
+{eje:'V',ejeName:'Metodología',topic:'Leyes de Lehman',emoji:'📜',
+ q:'¿Qué dice la <b>Ley I de Lehman (cambio continuo)</b>?',
+ opts:['Un programa usado en un entorno real debe adaptarse continuamente, o se vuelve progresivamente menos útil hasta dejar de usarse','Que el software nunca necesita cambios','Que la complejidad siempre baja sola','Que más programadores siempre aceleran un proyecto'],
+ correct:0,
+ explain:'La <span class="key2">Ley I (cambio continuo)</span> dice que un sistema en uso real debe evolucionar constantemente o se vuelve obsoleto. Ejemplo: un sistema de sueldos que no incorpore cambios impositivos produce resultados incorrectos hasta volverse inutilizable.'},
+{eje:'V',ejeName:'Metodología',topic:'Leyes de Lehman',emoji:'📜',
+ q:'¿Qué dice la <b>Ley II de Lehman (complejidad creciente)</b>?',
+ opts:['A medida que el software evoluciona, su complejidad aumenta, salvo que se trabaje activamente para reducirla (refactoring)','La complejidad del software disminuye con el tiempo automáticamente','El software nunca cambia su complejidad','La complejidad solo depende del lenguaje'],
+ correct:0,
+ explain:'La <span class="key2">Ley II (complejidad creciente)</span> establece que cada cambio tiende a aumentar la complejidad del sistema, a menos que se haga un esfuerzo explícito por reducirla (refactoring). Por eso el mantenimiento preventivo es importante.'},
+{eje:'V',ejeName:'Metodología',topic:'Leyes de Lehman',emoji:'📜',
+ q:'¿Qué dice la <b>Ley VII de Lehman (calidad decreciente)</b>?',
+ opts:['Sin mantenimiento continuo, la calidad percibida del sistema disminuye con el tiempo','La calidad del software siempre mejora sola','La calidad no cambia nunca','La calidad solo depende del hardware'],
+ correct:0,
+ explain:'La <span class="key2">Ley VII (calidad decreciente)</span> indica que, si no se mantiene y adapta, la calidad percibida de un sistema cae con el tiempo (el entorno cambia y el software queda atrás). Refuerza la idea de que el software en uso nunca está "terminado".'},
+{eje:'V',ejeName:'Metodología',topic:'Escritura IEEE',emoji:'📝',
+ q:'¿Qué es el <b>formato IEEE</b> en la escritura técnica?',
+ opts:['Un estándar académico internacional para estructurar y citar documentos técnicos (secciones, referencias numeradas, estilo formal)','Un lenguaje de programación','Un algoritmo de ordenamiento','Una estructura de datos'],
+ correct:0,
+ explain:'El <span class="key2">formato IEEE</span> (Institute of Electrical and Electronics Engineers) es un estándar para redactar documentos técnicos y científicos: define la estructura por secciones, el estilo formal y un sistema de citas con referencias numeradas. Da rigor y uniformidad a los trabajos de ingeniería.'}
+];
+/* ===================== MOTOR ===================== */
+const $=id=>document.getElementById(id);
+let game=null;
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+(function(){const syms=['{}','()','[]','if','for','->','O(n)','LIFO','FIFO','0x','while','==','&&'];const c=$('stars');
+ for(let i=0;i<18;i++){const s=document.createElement('div');s.className='sym';s.textContent=syms[i%syms.length];
+  s.style.left=Math.random()*100+'%';s.style.fontSize=(12+Math.random()*22)+'px';
+  s.style.animationDuration=(12+Math.random()*16)+'s';s.style.animationDelay=(-Math.random()*20)+'s';c.appendChild(s);}})();
+$('homeProf').innerHTML=PROF_SVG;
+const ejeColor={'I':'var(--cyan)','II':'var(--purple)','III':'var(--yellow)','IV':'var(--pink)','V':'var(--green)'};
+const ejeFull={'I':'EJE I · Conceptos Básicos','II':'EJE II · Estructuras de Datos','III':'EJE III · Eficiencia de Algoritmos','IV':'EJE IV · TAD y Complejidad','V':'EJE V · Metodología de Desarrollo'};
+const LETTERS=['A','B','C','D','E'];
+function start(mode){
+  let qs;
+  if(mode==='simulacro') qs=shuffle(Q).slice(0,15);
+  else if(mode==='maraton') qs=Q.slice().sort((a,b)=>a.eje===b.eje?0:(a.eje<b.eje?-1:1));
+  else qs=shuffle(Q.filter(x=>x.topic===mode));
+  if(!qs.length){toast('Sin preguntas para ese tema');return;}
+  game={mode,qs,i:0,score:0,lives:3,streak:0,maxStreak:0,answered:[],lifeMode:(mode==='simulacro'),dead:false,shuffledCorrect:0};
+  $('home').classList.add('hide');$('results').classList.add('hide');$('quiz').classList.remove('hide');renderQ();
+}
+function showTopics(){
+  const grid=$('topicGrid');grid.innerHTML='';
+  ['I','II','III','IV','V'].forEach(function(ej){
+    const seen=[];Q.forEach(function(q){if(q.eje===ej && !seen.find(function(s){return s.topic===q.topic;}))seen.push({topic:q.topic,emoji:q.emoji});});
+    if(!seen.length)return;
+    const h=document.createElement('div');
+    h.style.cssText='grid-column:1/-1;font-family:var(--mono);font-size:12.5px;font-weight:bold;margin:14px 0 2px;padding-bottom:5px;border-bottom:1px solid var(--line)';
+    h.style.color=ejeColor[ej];h.textContent=ejeFull[ej];
+    grid.appendChild(h);
+    seen.forEach(function(o){
+      const n=Q.filter(function(q){return q.topic===o.topic;}).length;
+      const d=document.createElement('div');d.className='topic';d.style.borderColor=ejeColor[ej];
+      d.innerHTML='<span class="em">'+o.emoji+'</span>'+o.topic+'<small>'+n+' pregunta'+(n>1?'s':'')+'</small>';
+      d.onclick=function(){start(o.topic);};grid.appendChild(d);
+    });
+  });
+  $('topicPick').classList.remove('hide');$('topicPick').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function hideTopics(){$('topicPick').classList.add('hide');}
+function renderQ(){
+  const q=game.qs[game.i];
+  $('miniProf').innerHTML=PROF_SVG;
+  $('lives').textContent = game.lifeMode ? '❤️'.repeat(Math.max(0,game.lives))+'🖤'.repeat(3-Math.max(0,game.lives)) : '∞';
+  $('streak').textContent='🔥 '+game.streak;
+  $('scr').textContent='⭐ '+game.score;
+  $('qnum').textContent=(game.i+1)+'/'+game.qs.length;
+  $('qbarFill').style.width=((game.i)/game.qs.length*100)+'%';
+  const tipo = q.ctx ? 'Situación' : 'Teoría';
+  $('tags').innerHTML='<span class="tag eje" style="color:'+ejeColor[q.eje]+'">EJE '+q.eje+' · '+q.ejeName+'</span><span class="tag topic">'+q.topic+'</span><span class="tag" style="color:var(--orange);background:rgba(255,166,78,.12)">'+tipo+'</span>';
+  if(q.ctx){
+    $('ctx').innerHTML='<span class="lbl">📋 Situación planteada por el profe</span><div class="scnIllu">'+illu(q.topic)+'</div>'+q.ctx;
+  }else{
+    $('ctx').innerHTML='<span class="lbl">📖 Pregunta teórica del profe</span><div class="scnIllu">'+illu(q.topic)+'</div>El profe quiere ver que tenés clara la teoría. Elegí la definición correcta 👇';
+  }
+  $('qtext').innerHTML=q.q;
+  const order=shuffle(q.opts.map(function(o,i){return {o:o,i:i};}));
+  game.shuffledCorrect = order.findIndex(function(x){return x.i===q.correct;});
+  const opts=$('opts');opts.innerHTML='';
+  order.forEach(function(item,idx){
+    const b=document.createElement('button');b.className='btn opt';
+    b.innerHTML='<span class="key">'+LETTERS[idx]+'</span>'+item.o;
+    b.onclick=()=>answer(idx,b);opts.appendChild(b);
+  });
+  $('explain').classList.remove('show');$('explain').innerHTML='';$('nextBtn').classList.add('hide');
+  const stage=$('qStage');stage.style.animation='none';void stage.offsetWidth;stage.style.animation='';
+}
+function bump(id){const e=$(id);e.classList.add('bump');setTimeout(()=>e.classList.remove('bump'),200);}
+function answer(idx,btn){
+  const q=game.qs[game.i];
+  const cc=game.shuffledCorrect;
+  Array.prototype.slice.call($('opts').children).forEach(function(b,i){
+    b.disabled=true;
+    if(i===cc){b.classList.add('correct');b.innerHTML+='<span class="mk">✅</span>';}
+    else if(i===idx){b.classList.add('wrong');b.innerHTML+='<span class="mk">❌</span>';}
+  });
+  const ok=idx===cc;
+  game.answered.push({q,ok,chosen:idx});
+  if(ok){
+    game.streak++;game.maxStreak=Math.max(game.maxStreak,game.streak);
+    const bonus=game.streak>=3?50:0;game.score+=100+bonus;
+    bump('scr');bump('streak');confetti();
+    if(game.streak>=3) showCombo('COMBO x'+game.streak+'! 🔥');
+    toast(bonus?('¡Correcto! +'+(100+bonus)+' ⭐'):'¡Correcto! +100 ⭐');
+  }else{
+    game.streak=0;if(game.lifeMode){game.lives--;bump('lives');}
+    $('qStage').classList.add('shake');setTimeout(()=>$('qStage').classList.remove('shake'),450);
+    toast('Ups, no era esa 😬');
+  }
+  $('scr').textContent='⭐ '+game.score;$('streak').textContent='🔥 '+game.streak;
+  $('lives').textContent = game.lifeMode ? '❤️'.repeat(Math.max(0,game.lives))+'🖤'.repeat(3-Math.max(0,game.lives)) : '∞';
+  $('qbarFill').style.width=((game.i+1)/game.qs.length*100)+'%';
+  const ex=$('explain');
+  ex.innerHTML='<h4 class="'+(ok?'ok':'no')+'">'+(ok?'✅ ¡Correcto! Así lo defendés:':'💡 Ojo con esto — la respuesta correcta:')+'</h4><p>'+q.explain+'</p>';
+  ex.classList.add('show');
+  if(game.lifeMode && game.lives<=0){$('nextBtn').textContent='Ver resultado →';game.dead=true;}
+  else $('nextBtn').textContent=(game.i>=game.qs.length-1)?'Ver resultado →':'Siguiente pregunta →';
+  $('nextBtn').classList.remove('hide');
+}
+function nextQ(){if(game.dead || game.i>=game.qs.length-1){return showResults();}game.i++;renderQ();window.scrollTo({top:0,behavior:'smooth'});}
+function showResults(){
+  $('quiz').classList.add('hide');$('results').classList.remove('hide');
+  const total=game.answered.length, hits=game.answered.filter(a=>a.ok).length;
+  const pct=total?Math.round(hits/total*100):0;
+  const nota=Math.max(1,Math.round(hits/total*10*10)/10);
+  let msg,emoji;
+  if(pct>=90){msg='¡Promocionado! Dominás el temario. 🎓';emoji='🏆';confettiBurst();}
+  else if(pct>=70){msg='Muy bien. Repasá los que fallaste y estás listo.';emoji='💪';}
+  else if(pct>=50){msg='Vas bien encaminado. Reforzá las justificaciones.';emoji='📚';}
+  else{msg='A repasar el temario con calma. ¡Dale de nuevo, se puede!';emoji='🔁';}
+  const misses=game.answered.filter(a=>!a.ok);
+  const byTopic={};game.answered.forEach(function(a){byTopic[a.q.topic]=byTopic[a.q.topic]||{ok:0,t:0};byTopic[a.q.topic].t++;if(a.ok)byTopic[a.q.topic].ok++;});
+  let rows='';Object.keys(byTopic).forEach(function(t){const d=byTopic[t];rows+='<tr><td>'+t+'</td><td class="'+(d.ok===d.t?'hit':'miss')+'">'+d.ok+'/'+d.t+' '+(d.ok===d.t?'✅':'')+'</td></tr>';});
+  const weak = misses.length ? '<p style="color:var(--muted);font-size:13px;margin-top:10px">Temas a reforzar: <b style="color:var(--orange)">'+Array.from(new Set(misses.map(m=>m.q.topic))).join(' · ')+'</b></p>' : '<p style="color:var(--green);font-size:14px">¡Respondiste todo bien! 🎉</p>';
+  $('resultCard').innerHTML=
+    '<div class="big">'+emoji+'</div>'+
+    '<div class="grade" style="color:'+(pct>=70?'var(--green)':pct>=50?'var(--yellow)':'var(--red)')+'">'+nota+'</div>'+
+    '<div style="font-family:var(--mono);font-size:13px;color:var(--muted)">nota estimada / 10</div>'+
+    '<div style="font-family:var(--mono);font-size:19px;margin-top:8px">'+hits+'/'+total+' correctas · '+pct+'%</div>'+
+    '<p style="margin-top:8px;font-size:15px">'+msg+'</p>'+
+    '<div style="font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:4px">⭐ '+game.score+' pts · 🔥 mejor racha: '+game.maxStreak+(game.dead?' · 💀 te quedaste sin vidas':'')+'</div>'+
+    '<table>'+rows+'</table>'+weak+
+    '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px">'+
+    (misses.length?'<button class="btn primary small" onclick="retryMisses()">↺ Reintentar fallados ('+misses.length+')</button>':'')+
+    '<button class="btn ghost small" onclick="quit()">🏠 Menú principal</button></div>';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function retryMisses(){
+  const miss=game.answered.filter(a=>!a.ok).map(a=>a.q);
+  game={mode:'retry',qs:shuffle(miss),i:0,score:0,lives:3,streak:0,maxStreak:0,answered:[],lifeMode:false,dead:false,shuffledCorrect:0};
+  $('results').classList.add('hide');$('quiz').classList.remove('hide');renderQ();
+}
+function quit(){$('quiz').classList.add('hide');$('results').classList.add('hide');$('home').classList.remove('hide');hideTopics();window.scrollTo({top:0,behavior:'smooth'});}
+function showCombo(txt){const c=$('combo');c.textContent=txt;c.classList.add('show');clearTimeout(c._t);c._t=setTimeout(()=>c.classList.remove('show'),900);}
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1500);}
+const cv=$('fx'),cx=cv.getContext('2d');let parts=[];
+function resize(){cv.width=window.innerWidth;cv.height=window.innerHeight;}resize();window.addEventListener('resize',resize);
+function confetti(n){n=n||60;const cols=['#4dffb0','#4de1ff','#b07bff','#ffd34e','#ff7bd5'];
+ for(let i=0;i<n;i++)parts.push({x:window.innerWidth/2,y:window.innerHeight*0.35,vx:(Math.random()-.5)*12,vy:Math.random()*-12-4,g:.4,s:5+Math.random()*6,c:cols[i%cols.length],r:Math.random()*6,vr:(Math.random()-.5)*.4,life:60+Math.random()*40});
+ if(!raf)loop();}
+function confettiBurst(){confetti(160);}
+let raf=null;
+function loop(){cx.clearRect(0,0,cv.width,cv.height);parts=parts.filter(p=>p.life>0);
+ parts.forEach(function(p){p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life--;
+  cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6);cx.restore();});
+ if(parts.length)raf=requestAnimationFrame(loop);else{raf=null;cx.clearRect(0,0,cv.width,cv.height);}}
+</script>
+</body>
+</html>
